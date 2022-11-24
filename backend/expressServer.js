@@ -42,7 +42,7 @@ class ExpressServer {
 
     }
 
-    async bindRouterToPath(path,routerMiddleWare) {
+    async bindRouterMiddlewareToPath(path, routerMiddleWare) {
         this.#expressApp.use(path,routerMiddleWare);
     }
 
