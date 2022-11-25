@@ -1,7 +1,7 @@
 
-const mongoDBCollectionFactory=require('mongoDBCollectionFactory');
+const MongoDBCollection=require('mongoDBCollection');
 
-class User {
+class User  extends MongoDBCollection{
     
     static #modelName="User";
 
@@ -21,7 +21,7 @@ class User {
         email: {
             type:String,
             required:true,
-            unique:true, // TODO: validator will be added
+            unique:true, // TODO: validator will be added to check email
         },
         birthDay: {
             type: Date,
@@ -34,7 +34,7 @@ class User {
         },
         avatarUrl : {
             type:String,
-            default:"/avatarUrls/defaultAvatar.png" // TODO: default image will be added and path could be changed
+            default:"/avatarUrls/defaultAvatar.jpg" // TODO: default image will be added and path could be changed
 
         },
         nativeLanguage: {
@@ -53,15 +53,11 @@ class User {
         }
     }
 
-    static #mongoDBCollectionCreater=new mongoDBCollectionFactory(this.#modelName,this.#userDefinitions);
-
-    static getSchema() {
-        return User.#mongoDBCollectionCreater.getSchema();
+    constructor() {
+        super(User.#modelName,User.#userDefinitions);
     }
 
-    static getModel() {
-        return User.#mongoDBCollectionCreater.getModel();
-    }
+
 
 }
 

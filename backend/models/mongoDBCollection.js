@@ -2,7 +2,7 @@
 const mongoose=require('mongoose');
 const assert = require("assert");
 
-class MongoDBCollectionFactory {
+class MongoDBCollection {
 
     // TODO: set methods for collection name
     //  and options will be added
@@ -11,13 +11,16 @@ class MongoDBCollectionFactory {
 
     #collectionName;
 
-    #collectionOptions;
+    #collectionDefinitions;
+
+    #collectionOptions= {timestamps: true};
 
     #collectionSchema=null;
 
     #collectionModel=null;
 
-    constructor(collectionName,collectionOptions) {
+    constructor(collectionName,collectionDefinitions,collectionOptions={}) {
+        this.#collectionDefinitions=collectionDefinitions;
         this.#collectionOptions=collectionOptions;
         this.#collectionName=collectionName;
         this.#createSchema();
@@ -25,7 +28,7 @@ class MongoDBCollectionFactory {
     }
 
     #createSchema() {
-        return new mongoose.Schema(this.#collectionOptions);
+        return new mongoose.Schema(this.#collectionDefinitions,this.#collectionOptions);
     }
 
     #createModel() {
@@ -43,4 +46,4 @@ class MongoDBCollectionFactory {
 
 }
 
-module.exports = MongoDBCollectionFactory;
+module.exports = MongoDBCollection;

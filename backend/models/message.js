@@ -1,16 +1,16 @@
 
 const MongoDBCollection=require('mongoDBCollection');
 
-class Comment extends  MongoDBCollection{
+class Message extends  MongoDBCollection{
 
-    static #modelName="Comment";
+    static #modelName="Message";
 
-    static #commentDefinitions = {
+    static #messageDefinitions = {
         senderId: {
             type:String,
             required:true
         },
-        receiverId : {
+        conversationId : {
             type:String,
             required:true
         },
@@ -19,10 +19,12 @@ class Comment extends  MongoDBCollection{
             required:true
         }
     }
+
     constructor() {
-        super(Comment.#modelName,Comment.#commentDefinitions);
+        super(Message.#modelName,Message.#messageDefinitions);
+
     }
 
 }
 
-module.exports = Comment;
+module.exports = Message;
