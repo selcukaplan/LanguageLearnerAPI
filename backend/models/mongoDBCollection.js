@@ -23,8 +23,8 @@ class MongoDBCollection {
         this.#collectionDefinitions=collectionDefinitions;
         this.#collectionOptions=collectionOptions;
         this.#collectionName=collectionName;
-        this.#createSchema();
-        this.#createModel();
+        this.#collectionSchema=this.#createSchema();
+        this.#collectionModel=this.#createModel();
     }
 
     #createSchema() {
@@ -36,6 +36,29 @@ class MongoDBCollection {
         return new mongoose.model(this.#collectionName,this.#collectionSchema);
     }
 
+    getRequiredDefinitions() {
+        const requiredDefinitions={}; // storing like hash set
+        for (let currentDefinition in this.#collectionDefinitions) {
+            let currentObject=this.#collectionDefinitions[currentDefinition];
+            if (currentObject.hasOwnProperty("required") && currentObject["required"] === true) {
+                requiredDefinitions[currentDefinition] =  true;
+            }
+        }
+        return requiredDefinitions;
+    }
+
+     areKeysMatched(object) {
+        let requiredDefinitions= this.getRequiredDefinitions();
+        const objectKeys=Object.keys(object);
+        if (objectKeys.length !== Object.keys(requiredDefinitions).length) {return false};
+        for (let currentKey of objectKeys) {
+            if (requiredDefinitions[currentKey]) {
+                delete requiredDefinitions[currentKey];
+            }
+        }
+        return Object.keys(requiredDefinitions).length === 0;
+    }
+
     getSchema() {
         return this.#collectionSchema;
     }
@@ -43,6 +66,7 @@ class MongoDBCollection {
     getModel() {
         return this.#collectionModel;
     }
+
 
 }
 
