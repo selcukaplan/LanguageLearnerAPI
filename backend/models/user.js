@@ -1,5 +1,9 @@
 
-const MongoDBCollection=require('mongoDBCollection');
+const MongoDBCollection=require('./mongoDBCollection');
+const { BadRequest}=require('../errors');
+const validator=require('validator');
+const bcrypt=require('bcrypt');
+const assert = require("assert");
 
 class User  extends MongoDBCollection{
     
@@ -21,7 +25,8 @@ class User  extends MongoDBCollection{
         email: {
             type:String,
             required:true,
-            unique:true, // TODO: validator will be added to check email
+            unique:true,
+
         },
         birthDay: {
             type: Date,
@@ -58,6 +63,25 @@ class User  extends MongoDBCollection{
     }
 
 
+     async signUp(userObject) {
+        if (!this.areKeysMatched(userObject)) {
+            throw new BadRequest('User object is not valid!')
+        }
+        const email=userObject.email;
+        const password=userObject.password;
+        assert((email) && (password), "keys matched is not valid!");
+        if (!validator.isEmail(email)) {
+            throw new BadRequest('Email is not valid!')
+        }
+        const exists = await this.getModel().findOne({email});
+        if (exists) {
+             throw new BadRequest('Email already in use');
+         }
+        const salt=await bcrypt.genSalt(10);
+        const hash=await bcrypt.hash(password,salt);
+        const newUser=await this.getModel().create({...userObject,password : hash})
+        return newUser;
+    }
 
 }
 
