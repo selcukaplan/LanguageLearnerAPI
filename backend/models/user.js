@@ -1,11 +1,11 @@
 
 const MongoDBCollection=require('./mongoDBCollection');
-const { BadRequest}=require('../errors');
+const { BadRequest,UnAuthenticated}=require('../errors');
 const validator=require('validator');
 const bcrypt=require('bcrypt');
 const assert = require("assert");
 
-class User  extends MongoDBCollection{
+class User  extends MongoDBCollection {
     
     static #userName="User";
 
@@ -54,12 +54,12 @@ class User  extends MongoDBCollection{
     }
 
 
+
      async signUp(userObject) {
-        if (!this.areKeysMatched(userObject)) {
+        if (!this.areRequiredKeysMatched(userObject)) {
             throw new BadRequest('User object is not valid!')
         }
-        const email=userObject.email;
-        const password=userObject.password;
+        const {email,password} = userObject;
         assert((email) && (password), "keys matched is not valid!");
         if (!validator.isEmail(email)) {
             throw new BadRequest('Email is not valid!')
@@ -71,6 +71,7 @@ class User  extends MongoDBCollection{
         const salt=await bcrypt.genSalt(10);
         const hash=await bcrypt.hash(password,salt);
         const newUser=await this.getModel().create({...userObject,password : hash})
+        newUser.id=newUser._id;    //TODO: better approach could be used
         return newUser;
     }
 
