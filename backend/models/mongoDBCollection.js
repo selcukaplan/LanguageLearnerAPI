@@ -4,11 +4,6 @@ const assert = require("assert");
 
 class MongoDBCollection {
 
-    // TODO: set methods for collection name
-    //  and options will be added
-    // TODO: when set methods are called,
-    //  schema and model will be created automatically
-
     #collectionName;
 
     #collectionDefinitions;
@@ -36,36 +31,30 @@ class MongoDBCollection {
         return new mongoose.model(this.#collectionName,this.#collectionSchema);
     }
 
-    getRequiredDefinitions() {
-        const requiredDefinitions={}; // storing like hash set
+
+
+    getRequiredDefinitionKeys() {
+        const requiredDefinitions=[]; // TODO: could be stored as a hash set instead of array
         for (let currentDefinition in this.#collectionDefinitions) {
             let currentObject=this.#collectionDefinitions[currentDefinition];
             if (currentObject.hasOwnProperty("required") && currentObject["required"] === true) {
-                requiredDefinitions[currentDefinition] =  true;
+                requiredDefinitions.push(currentDefinition);
             }
         }
         return requiredDefinitions;
     }
 
-     areKeysMatched(object) {
-        let requiredDefinitions= this.getRequiredDefinitions();
-        const objectKeys=Object.keys(object);
-        if (objectKeys.length !== Object.keys(requiredDefinitions).length) {return false};
-        for (let currentKey of objectKeys) {
-            if (requiredDefinitions[currentKey]) {
-                delete requiredDefinitions[currentKey];
-            }
-        }
-        return Object.keys(requiredDefinitions).length === 0;
-    }
 
-    getSchema() {
-        return this.#collectionSchema;
+     areRequiredKeysMatched(object) {
+        let requiredDefinitionKeys= this.getRequiredDefinitionKeys().sort(); // TODO: sort algorithm could be improved
+        const objectKeys=Object.keys(object).sort();// TODO: sort algorithm could be improved
+        return JSON.stringify(requiredDefinitionKeys) === JSON.stringify(objectKeys);
     }
 
     getModel() {
         return this.#collectionModel;
     }
+
 
 
 }
