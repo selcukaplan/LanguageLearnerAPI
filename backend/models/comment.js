@@ -3,9 +3,9 @@ const MongoDBCollection=require('mongoDBCollection');
 
 class Comment extends  MongoDBCollection{
 
-    static #modelName="Comment";
+   #commentName="Comment";
 
-    static #commentDefinitions = {
+    #commentDefinitions = {
         senderId: {
             type:String,
             required:true
@@ -19,8 +19,9 @@ class Comment extends  MongoDBCollection{
             required:true
         }
     }
-    constructor() {
-        super(Comment.#modelName,Comment.#commentDefinitions);
+
+    constructor(collectionName=Comment.#commentName,collectionDefinitions = Comment.#commentDefinitions) {
+        super(collectionName,collectionDefinitions);
     }
 
 }

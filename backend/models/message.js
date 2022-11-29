@@ -3,7 +3,7 @@ const MongoDBCollection=require('mongoDBCollection');
 
 class Message extends  MongoDBCollection{
 
-    static #modelName="Message";
+    static #messageName="Message";
 
     static #messageDefinitions = {
         senderId: {
@@ -20,11 +20,9 @@ class Message extends  MongoDBCollection{
         }
     }
 
-    constructor() {
-        super(Message.#modelName,Message.#messageDefinitions);
-
+    constructor(collectionName=Message.#messageName,collectionDefinitions = Message.#messageDefinitions) {
+        super(collectionName,collectionDefinitions);
     }
-
 }
 
 module.exports = Message;

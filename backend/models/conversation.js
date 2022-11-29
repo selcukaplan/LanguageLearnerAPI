@@ -3,7 +3,7 @@ const MongoDBCollection=require('mongoDBCollection');
 
 class Conversation extends  MongoDBCollection{
 
-    static #modelName="Conversation";
+    static #conversationName="Conversation";
 
     static #conversationDefinitions = {
         members: {
@@ -12,8 +12,9 @@ class Conversation extends  MongoDBCollection{
             required:true
         }
     }
-    constructor() {
-        super(Conversation.#modelName,Conversation.#conversationDefinitions);
+    constructor(collectionName=Conversation.#conversationName,
+                collectionDefinitions = Conversation.#conversationDefinitions) {
+        super(collectionName,collectionDefinitions);
     }
 }
 

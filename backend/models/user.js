@@ -57,8 +57,8 @@ class User  extends MongoDBCollection{
         }
     }
 
-    constructor() {
-        super(User.#modelName,User.#userDefinitions);
+    constructor(collectionName=User.#userName,collectionDefinitions = User.#userDefinitions) {
+        super(collectionName,collectionDefinitions);
     }
 
 
