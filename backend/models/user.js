@@ -26,12 +26,11 @@ class User  extends MongoDBCollection{
             type:String,
             required:true,
             unique:true,
-
         },
         birthDay: {
             type: Date,
             required:true,
-            min:"2004"
+            // Todo: min date will be added
         },
         info: {
             type:String,
