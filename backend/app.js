@@ -4,11 +4,15 @@ const ExpressServer = require('./expressServer.js');
 
 const MongoDB= require("./database/mongoDB");
 
+const errorHandlerMiddleWare=require('./middlewares/errorHandler');
+
 const expressServer=ExpressServer.createServerFromConfig();
 
 const UserRouter=require('./routes/userRouter');
 
 expressServer.bindRouterMiddlewareToPath('/api/v1/user',UserRouter.getRouter());
+
+expressServer.bindMiddleWare(errorHandlerMiddleWare);
 
 async function startWebBackend() {
     try {
