@@ -6,11 +6,12 @@ const MongoDB= require("./database/mongoDB");
 
 const errorHandlerMiddleWare=require('./middlewares/errorHandler');
 
+const userRouter=require('./routes/userRouter');
+
 const expressServer=ExpressServer.createServerFromConfig();
 
-const UserRouter=require('./routes/userRouter');
 
-expressServer.bindRouterMiddlewareToPath('/api/v1/user',UserRouter.getRouter());
+expressServer.bindRouterMiddlewareToPath('/api/v1/users',userRouter);
 
 expressServer.bindMiddleWare(errorHandlerMiddleWare);
 

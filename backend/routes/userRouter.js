@@ -3,21 +3,18 @@ const express=require('express');
 
 const UserController=require('../controllers/userController');
 
+const authenticateTheUser = require('../middlewares/authentication');
 
-class UserRouter {
+const userRouter = express.Router();
 
-    static #router=express.Router();
+userRouter.post('/signup', UserController.signUpUser);
 
-    static addRequestHandlerToPostRouter(path,requestHandler) {
-        UserRouter.#router.post(path,requestHandler);
+userRouter.post('/login', UserController.loginUser);
 
-    }
-    static getRouter() {
-        return UserRouter.#router;
-    }
+userRouter.get('/ForeignLanguages', [authenticateTheUser,UserController.getUsersWithSameForeignLanguages]);
 
-}
+userRouter.get('/friends',[authenticateTheUser,UserController.getFriendsOfUser]);
 
-UserRouter.addRequestHandlerToPostRouter('/signup', UserController.signUpUser);
+userRouter.get('/', [authenticateTheUser,UserController.getUsers]);
 
-module.exports=UserRouter;
+module.exports=userRouter;
