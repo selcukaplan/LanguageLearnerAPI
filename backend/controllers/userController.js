@@ -15,11 +15,15 @@ class UserController {
 
      }
 
-    static async signUpUser(request,response) {
-        const newUser = await UserController.#user.signUp(request.body);
-        const newUserToken = await UserController.#createToken(newUser._id);
-        const responseData=ResponseController.getDataResponse(newUserToken)
-        response.status(StatusCodes.CREATED).json(responseData);
+    static async signUpUser(request,response,next) {
+         try {
+             const newUser = await UserController.#user.signUp(request.body);
+             const newUserToken = await UserController.#createToken(newUser._id);
+             const responseData = ResponseController.getDataResponse(newUserToken)
+             response.status(StatusCodes.CREATED).json(responseData);
+         } catch (error) {
+             next(error);
+         }
     }
 
 }
