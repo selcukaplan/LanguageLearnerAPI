@@ -12,7 +12,7 @@ class MongoDB {
 
     static defaultOptions={}
 
-    static mongoURI= process.env.MONGO_URI || "";
+    static mongoURI= process.env.MONGO_URI;
 
     static setOptions(newOptions) {
         MongoDB.defaultOptions=newOptions;
