@@ -82,6 +82,24 @@ class User  extends MongoDBCollection{
         return newUser;
     }
 
+    async login(userObject) {
+        const {email,password} = userObject;
+        if (!email || !password) {
+            throw new BadRequest('Please provide email and password!');
+        }
+        const user=await this.getModel().findOne({email});
+        if (!user) {
+            throw new UnAuthenticated('Invalid email');
+        }
+        const isMatch=await bcrypt.compare(password,user.password);
+        if (!isMatch) {
+            throw new UnAuthenticated('Invalid password');
+        }
+        user.id=user._id; //TODO: better approach could be used
+        return user;
+    }
+
+
 }
 
 module.exports = User;
