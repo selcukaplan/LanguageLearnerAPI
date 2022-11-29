@@ -7,25 +7,18 @@ const assert = require("assert");
 
 class User  extends MongoDBCollection{
     
-    static #modelName="User";
+    static #userName="User";
 
     static #userDefinitions = {
-        username: {
-            // TODO: Index property can be added to decrease complexity
+        email: {
             type:String,
             required:true,
             unique:true,
-            minLength: 6
         },
         password: {
             type: String,
             required:true,
             minLength: 6,
-        },
-        email: {
-            type:String,
-            required:true,
-            unique:true,
         },
         birthDay: {
             type: Date,
@@ -46,13 +39,12 @@ class User  extends MongoDBCollection{
             required:true,
         },
         foreignLanguages: {
+            //TODO: will be stored as a map in the database  to improve complexity
             type: Array,
             required:true,
-            maxLength: 3, // TODO: for testing
         },
         friends: {
             type:Array,
-            maxLength:10, // TODO: for testing
             default:[]
         }
     }
