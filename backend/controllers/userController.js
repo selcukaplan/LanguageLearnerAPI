@@ -3,9 +3,11 @@ const {StatusCodes} = require('http-status-codes');
 const User = require('../models/user');
 const ResponseController = require('./responseController');
 const jwt=require('jsonwebtoken');
-const {UnAuthenticated} = require("../errors");
+const {UnAuthenticated,BadRequest} = require("../errors");
 
 class UserController {
+
+    //Todo: all return statements coming from the database will be checked for whether they returned error or not
 
     static #user=new User();
 
@@ -29,7 +31,7 @@ class UserController {
              const newUser = await UserController.#user.signUp(request.body);
              const newUserToken = await UserController.#createToken(newUser.id);
              const responseData = ResponseController.getDataResponse(newUserToken)
-             response.status(StatusCodes.CREATED).json(responseData);
+             return response.status(StatusCodes.CREATED).json(responseData);
          } catch (error) {
              next(error);
          }
@@ -40,14 +42,14 @@ class UserController {
              const user=await UserController.#user.login(request.body);
              const userToken=await UserController.#createToken(user.id);
              const responseData=ResponseController.getDataResponse(userToken);
-             response.status(StatusCodes.OK).json(responseData);
+             return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
          }
 
     }
 
-    static async getUsersWithSameForeignLanguages(request,response,next) {
+    static async getUsersHasSameForeignLanguages(request, response, next) {
          try {
                 const currentUserId = UserController.#getUserId(request);
                 // Todo: foreign languages will be stored as a map in the database
@@ -57,7 +59,7 @@ class UserController {
                 const otherUsers=await UserController.#user.getModel()
                     .find({'foreignLanguages' : { $in : currentUserForeignLanguages}, "_id" : { $ne : currentUserId}});
                 const responseData = ResponseController.getDataResponse(otherUsers);
-                response.status(StatusCodes.OK).json(responseData);
+                return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
          }
@@ -69,7 +71,7 @@ class UserController {
             const friendsOfUser=await UserController.#user.getModel()
                 .findById(currentUserId).select('friends');
             const responseData = ResponseController.getDataResponse(friendsOfUser);
-            response.status(StatusCodes.OK).json(responseData);
+            return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
         }
@@ -79,7 +81,7 @@ class UserController {
          try {
              const users = await UserController.#user.getModel().find();
              const responseData = ResponseController.getDataResponse(users);
-             response.status(StatusCodes.OK).json(responseData);
+             return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
          }
