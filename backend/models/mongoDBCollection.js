@@ -31,6 +31,16 @@ class MongoDBCollection {
         return new mongoose.model(this.#collectionName,this.#collectionSchema);
     }
 
+    isSubSetOfDefinitions(definitionsObject) {
+        if (Object.keys(definitionsObject).length === 0) {return false};
+        for (let currentDefinition in definitionsObject) {
+            if (!this.#collectionDefinitions.hasOwnProperty(currentDefinition)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
 
     getRequiredDefinitionKeys() {
