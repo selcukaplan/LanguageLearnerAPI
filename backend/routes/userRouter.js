@@ -11,10 +11,12 @@ userRouter.post('/signup', UserController.signUpUser);
 
 userRouter.post('/login', UserController.loginUser);
 
-userRouter.get('/ForeignLanguages', [authenticateTheUser,UserController.getUsersWithSameForeignLanguages]);
+userRouter.get('/foreignLanguages', [authenticateTheUser,UserController.getUsersHasSameForeignLanguages]);
 
 userRouter.get('/friends',[authenticateTheUser,UserController.getFriendsOfUser]);
 
-userRouter.get('/', [authenticateTheUser,UserController.getUsers]);
+userRouter.get('/', [UserController.getUsers]);
+
+userRouter.patch('/update',[authenticateTheUser,UserController.updateUser]);
 
 module.exports=userRouter;
