@@ -85,6 +85,43 @@ class UserController {
          }
     }
 
+
+    static async updateUser(request,response,next) {
+         try {
+             const currentUserId=UserController.#getUserId(request);
+             const newUserInfo=request.body;
+             if (!UserController.#user.isSubSetOfDefinitions(newUserInfo)) {
+                 throw new BadRequest('User body is not valid!');
+             }
+             const oldUserInfo= await UserController.#user.getModel()
+                 .findByIdAndUpdate(currentUserId,newUserInfo);
+             const responseData=ResponseController.getDataResponse(oldUserInfo)
+             return response.status(StatusCodes.OK).json(responseData);
+         } catch (error) {
+             next(error);
+         }
+
+    }
+
+    static async addFriendsToUser(request,response,next) {
+         try {
+             const newFriendId=request.params.friendId;
+             if (!newFriendId) {throw new BadRequest('Friend id is not found in the request')};
+             const currentUserId=UserController.#getUserId(request);
+             const currentUser=await UserController.#user.getModel().findById(currentUserId).select('friends');
+             currentUser.friends.push(newFriendId);
+             const updatedUser=await UserController.#user.getModel().findByIdAndUpdate(currentUserId,currentUser);
+             const responseData=ResponseController.getDataResponse(updatedUser);
+             return response.status(StatusCodes.OK).json(responseData);
+         } catch (error) {
+             next(error);
+         }
+    }
+
+
+
+
+
 }
 
 module.exports = UserController;
