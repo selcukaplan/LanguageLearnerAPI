@@ -8,10 +8,14 @@ const errorHandlerMiddleWare=require('./middlewares/errorHandler');
 
 const userRouter=require('./routes/userRouter');
 
+const commentRouter=require("./routes/commentRouter");
+
 const expressServer=ExpressServer.createServerFromConfig();
 
 
 expressServer.bindRouterMiddlewareToPath('/api/v1/users',userRouter);
+
+expressServer.bindRouterMiddlewareToPath('/api/v1/comments',commentRouter);
 
 expressServer.bindMiddleWare(errorHandlerMiddleWare);
 
