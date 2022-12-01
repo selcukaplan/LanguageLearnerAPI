@@ -1,11 +1,11 @@
 
-const MongoDBCollection=require('mongoDBCollection');
+const MongoDBCollection=require('./mongoDBCollection');
 
 class Comment extends  MongoDBCollection{
 
-   #commentName="Comment";
+   static #commentName="Comment";
 
-    #commentDefinitions = {
+    static #commentDefinitions = {
         senderId: {
             type:String,
             required:true
@@ -22,6 +22,10 @@ class Comment extends  MongoDBCollection{
 
     constructor(collectionName=Comment.#commentName,collectionDefinitions = Comment.#commentDefinitions) {
         super(collectionName,collectionDefinitions);
+    }
+
+    isCommentBodyValid(commentBody) {
+        return this.areRequiredKeysMatched(commentBody);
     }
 
 }
