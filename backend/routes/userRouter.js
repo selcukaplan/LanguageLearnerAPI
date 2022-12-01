@@ -19,4 +19,8 @@ userRouter.get('/', [UserController.getUsers]);
 
 userRouter.patch('/update',[authenticateTheUser,UserController.updateUser]);
 
+userRouter.patch('/addFriend/:friendId',[authenticateTheUser,UserController.addFriendToUser]);
+
+userRouter.patch('/removeFriend/:friendId',[authenticateTheUser,UserController.removeFriendFromUser]);
+
 module.exports=userRouter;
