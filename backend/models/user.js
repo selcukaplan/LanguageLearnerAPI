@@ -39,11 +39,14 @@ class User  extends MongoDBCollection {
             required:true,
         },
         foreignLanguages: {
-            //TODO: will be stored as a map in the database  to improve complexity
+            //Todo: foreign languages are unique that's why another data structure like
+            // hash set must be used to store unique values instead of using array
             type: Array,
             required:true,
         },
         friends: {
+            //Todo: friendIds are unique that's why another data structure like
+            // hash set must be used to store unique values instead of using array
             type:Array,
             default:[]
         }
