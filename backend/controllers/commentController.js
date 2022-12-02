@@ -56,6 +56,21 @@ class CommentController {
 
     //TODO: update comment will be added
 
+    static async updateComment(request,response,next) {
+        try {
+            const commentBody = request.body;
+            if (!CommentController.#comment.isSubSetOfDefinitions(commentBody)) {
+                throw new BadRequest('Comment body is not valid!');
+            }
+            const senderId = UserController.getUserId(request);
+            const commentId = request.params.commentId;
+            const updatedComment = await CommentController.#comment.getModel()
+                .findOneAndUpdate({senderId, _id: commentId}, commentBody);
+            const responseData = ResponseController.getDataResponse(updatedComment);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
 
 
 
