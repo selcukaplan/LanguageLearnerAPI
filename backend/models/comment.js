@@ -24,9 +24,6 @@ class Comment extends  MongoDBCollection{
         super(collectionName,collectionDefinitions);
     }
 
-    isCommentBodyValid(commentBody) {
-        return this.areRequiredKeysMatched(commentBody);
-    }
 
 }
 
