@@ -8,6 +8,7 @@ class Conversation extends  MongoDBCollection{
     static #conversationDefinitions = {
         members: {
             // TODO: Index property can be added to decrease complexity
+            //TODO: hash set can be used because members are unique
             type:Array,
             required:true
         }
@@ -16,6 +17,8 @@ class Conversation extends  MongoDBCollection{
                 collectionDefinitions = Conversation.#conversationDefinitions) {
         super(collectionName,collectionDefinitions);
     }
+
+
 }
 
 module.exports = Conversation;
