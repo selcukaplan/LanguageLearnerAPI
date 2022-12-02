@@ -30,7 +30,7 @@ class CommentController {
             const senderId = UserController.getUserId(request);
             const receiverId=request.params.receiverId;
             const commentBody = {senderId,receiverId,...request.body};
-            if (!CommentController.#comment.isCommentBodyValid(commentBody)) {
+            if (!CommentController.#comment.areRequiredKeysMatched(commentBody)) {
                 throw new BadRequest('Comment body is not valid!');
             }
             const newComment=await CommentController.#comment.getModel().create({...commentBody});
@@ -46,7 +46,7 @@ class CommentController {
         try {
             const senderId = UserController.getUserId(request);
             const commentId=request.params.commentId;
-            const deletedComment=await CommentController.#comment.getModel().findByIdAndDelete({senderId, _id : commentId});
+            const deletedComment=await CommentController.#comment.getModel().findOneAndDelete({senderId, _id : commentId});
             const responseData=ResponseController.getDataResponse(deletedComment);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
@@ -54,7 +54,6 @@ class CommentController {
         }
     }
 
-    //TODO: update comment will be added
 
     static async updateComment(request,response,next) {
         try {
@@ -72,6 +71,7 @@ class CommentController {
             next(error);
         }
 
+    }
 
 
 
