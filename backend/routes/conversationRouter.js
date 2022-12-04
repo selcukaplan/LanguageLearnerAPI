@@ -1,18 +1,18 @@
 
 const express=require('express');
 
-const CommentController=require('../controllers/commentController');
+const ConversationController = require('../controllers/conversationController');
 
 const authenticateTheUser = require('../middlewares/authentication');
 
 const commentRouter = express.Router();
 
-commentRouter.post('/:receiverId', [authenticateTheUser,CommentController.createComment]);
+commentRouter.post('/', [authenticateTheUser,ConversationController.createConversation]);
 
-commentRouter.get('/:userId', [CommentController.getCommentsOfUser]);
+commentRouter.get('/', [authenticateTheUser, ConversationController.getConversationOfMembers]);
 
-commentRouter.patch('/:commentId', [authenticateTheUser, CommentController.updateComment]);
+commentRouter.patch('/addMember/:conversationId', [authenticateTheUser, ConversationController.addMembersToConversation]);
 
-commentRouter.delete('/:commentId',[authenticateTheUser,CommentController.removeComment]);
+commentRouter.patch('/removeMember/:conversationId',[authenticateTheUser,ConversationController.removeMembersFromConversation]);
 
 module.exports=commentRouter;
