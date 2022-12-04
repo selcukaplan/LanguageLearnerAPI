@@ -43,13 +43,10 @@ class ConversationController {
     static async addMembersToConversation(request,response,next) {
         try {
             const conversationId=request.params.conversationId;
-            const newMembers = request.body;
-            if (!ConversationController.#conversation.isSubSetOfDefinitions(newMembers)) {
-                throw BadRequest('Members body is not valid');
-            }
-            const updatedConversation=await CommentController.#conversation.getModel()
-                .findByIdAndUpdate(conversationId,{$push : {"members" : newMembers}});
-            const responseData=ResponseController.getDataResponse(updatedConversation);
+            const newMembers = request.body.members;
+            const updatedConversation=await ConversationController.#conversation.getModel()
+                .findByIdAndUpdate(conversationId,{$push : {$each : {"members" : newMembers}}});
+            const responseData=ResponseController.createResponseData(updatedConversation);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -60,13 +57,10 @@ class ConversationController {
     static async removeMembersFromConversation(request,response,next) {
         try {
             const conversationId=request.params.conversationId;
-            const deletedMembers = request.body;
-            if (!ConversationController.#conversation.isSubSetOfDefinitions(deletedMembers)) {
-                throw BadRequest('Members body is not valid');
-            }
-            const updatedConversation=await CommentController.#conversation.getModel()
-                .findByIdAndUpdate(conversationId,{ $pull : {"members" : newMembers}});
-            const responseData=ResponseController.getDataResponse(updatedConversation);
+            const deletedMembers= request.body.members;
+            const updatedConversation=await ConversationController.#conversation.getModel()
+                .findByIdAndUpdate(conversationId,{ $pull : {"members" :  {$in : deletedMembers}}});
+            const responseData=ResponseController.createResponseData(updatedConversation);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
