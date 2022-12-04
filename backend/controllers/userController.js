@@ -18,7 +18,7 @@ class UserController {
 
      }
 
-     static getUserId(request) {
+     static fetchUserIdFromRequest(request) {
          const userId=request.user;
          if (!userId) {
              throw new UnAuthenticated('Authentication was not provided!');
@@ -51,7 +51,7 @@ class UserController {
 
     static async getUsersHasSameForeignLanguages(request, response, next) {
          try {
-                const currentUserId = UserController.getUserId(request);
+                const currentUserId = UserController.fetchUserIdFromRequest(request);
                 // Todo: foreign languages will be stored as a map in the database
                 const currentUser=await UserController.#user.getModel()
                     .findById(currentUserId);
@@ -67,7 +67,7 @@ class UserController {
 
     static async getFriendsOfUser(request,response,next) {
         try {
-            const currentUserId = UserController.getUserId(request);
+            const currentUserId = UserController.fetchUserIdFromRequest(request);
             const friendsOfUser=await UserController.#user.getModel()
                 .findById(currentUserId).select('friends');
             const responseData = ResponseController.createResponseData(friendsOfUser);
@@ -90,7 +90,7 @@ class UserController {
 
     static async updateUser(request,response,next) {
          try {
-             const currentUserId=UserController.getUserId(request);
+             const currentUserId=UserController.fetchUserIdFromRequest(request);
              const newUserInfo=request.body;
              if (!UserController.#user.isSubSetOfDefinitions(newUserInfo)) {
                  throw new BadRequest('User body is not valid!');
@@ -109,7 +109,7 @@ class UserController {
          try {
              const newFriendId=request.params.friendId;
              if (!newFriendId) {throw new BadRequest('Friend id is not found in the request')};
-             const currentUserId=UserController.getUserId(request);
+             const currentUserId=UserController.fetchUserIdFromRequest(request);
              const updatedUser=await UserController.#user.getModel()
                  .findByIdAndUpdate(currentUserId,{$push: {"friends": newFriendId}});
              const responseData=ResponseController.createResponseData(updatedUser);
@@ -123,7 +123,7 @@ class UserController {
         try {
             const friendId=request.params.friendId;
             if (!friendId) {throw new BadRequest('Friend id is not found in the request')};
-            const currentUserId=UserController.getUserId(request);
+            const currentUserId=UserController.fetchUserIdFromRequest(request);
             const updatedUser=await UserController.#user.getModel()
                 .findByIdAndUpdate(currentUserId,{$pull:{"friends":{$in : [friendId]}}});
             const responseData=ResponseController.createResponseData(updatedUser);
