@@ -18,7 +18,7 @@ class CommentController {
         try {
             const currentUserId = request.params.userId;
             const commentsOfUser=await CommentController.#comment.getModel().find({receiverId : currentUserId});
-            const responseData = ResponseController.getDataResponse(commentsOfUser);
+            const responseData = ResponseController.createResponseData(commentsOfUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -27,14 +27,14 @@ class CommentController {
 
     static async createComment(request,response,next) {
         try {
-            const senderId = UserController.getUserId(request);
+            const senderId = UserController.fetchUserIdFromRequest(request);
             const receiverId=request.params.receiverId;
             const commentBody = {senderId,receiverId,...request.body};
             if (!CommentController.#comment.areRequiredKeysMatched(commentBody)) {
                 throw new BadRequest('Comment body is not valid!');
             }
             const newComment=await CommentController.#comment.getModel().create({...commentBody});
-            const responseData=ResponseController.getDataResponse(newComment);
+            const responseData=ResponseController.createResponseData(newComment);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -44,10 +44,10 @@ class CommentController {
 
     static async removeComment(request,response,next) {
         try {
-            const senderId = UserController.getUserId(request);
+            const senderId = UserController.fetchUserIdFromRequest(request);
             const commentId=request.params.commentId;
             const deletedComment=await CommentController.#comment.getModel().findOneAndDelete({senderId, _id : commentId});
-            const responseData=ResponseController.getDataResponse(deletedComment);
+            const responseData=ResponseController.createResponseData(deletedComment);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -61,11 +61,11 @@ class CommentController {
             if (!CommentController.#comment.isSubSetOfDefinitions(commentBody)) {
                 throw new BadRequest('Comment body is not valid!');
             }
-            const senderId = UserController.getUserId(request);
+            const senderId = UserController.fetchUserIdFromRequest(request);
             const commentId = request.params.commentId;
             const updatedComment = await CommentController.#comment.getModel()
                 .findOneAndUpdate({senderId, _id: commentId}, commentBody);
-            const responseData = ResponseController.getDataResponse(updatedComment);
+            const responseData = ResponseController.createResponseData(updatedComment);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
