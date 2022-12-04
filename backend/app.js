@@ -10,10 +10,14 @@ const userRouter=require('./routes/userRouter');
 
 const commentRouter=require("./routes/commentRouter");
 
+const conversationRouter =require("./routes/conversationRouter");
+
 const expressServer=ExpressServer.createServerFromConfig();
 
 
 expressServer.bindRouterMiddlewareToPath('/api/v1/users',userRouter);
+
+expressServer.bindRouterMiddlewareToPath('/api/v1/conversations',conversationRouter);
 
 expressServer.bindRouterMiddlewareToPath('/api/v1/comments',commentRouter);
 
