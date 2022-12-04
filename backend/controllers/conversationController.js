@@ -18,10 +18,10 @@ class ConversationController {
         try {
             const membersBody=request.body;
             if (!ConversationController.#conversation.areRequiredKeysMatched(membersBody)) {
-                throw BadRequest('Conversation body is not valid!');
+                throw new BadRequest('Conversation body is not valid!');
             }
             const newConversation=await ConversationController.#conversation.getModel().create(membersBody);
-            const responseData = ResponseController.getDataResponse(newConversation);
+            const responseData = ResponseController.createResponseData(newConversation);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -30,10 +30,10 @@ class ConversationController {
 
     static async getConversationOfMembers(request,response,next) {
         try {
-            const currentMemberId=UserController.getUserId(request);
-            const anotherMembersId= request.body;
-            const conversation = await ConversationController.#conversation.getModel().find({"members" : [...anotherMembersId,currentMemberId]});
-            const responseData = ResponseController.getDataResponse(conversation);
+            const currentMemberId=UserController.fetchUserIdFromRequest(request);
+            const anotherMembersId= request.body.members;
+            const conversation = await ConversationController.#conversation.getModel().find({"members" : {$all : [...anotherMembersId,currentMemberId]}});
+            const responseData = ResponseController.createResponseData(conversation);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -71,4 +71,4 @@ class ConversationController {
 
 }
 
-module.exports = CommentController;
+module.exports = ConversationController;
