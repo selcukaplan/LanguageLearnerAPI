@@ -2,7 +2,7 @@
 
 class ResponseController {
 
-    static getErrorResponse(error) {
+    static createResponseError(error) {
         return {
             isDone: false,
             error : error.message || error
@@ -10,7 +10,7 @@ class ResponseController {
 
     }
 
-    static getDataResponse(data) {
+    static createResponseData(data) {
         return {
             isDone: true,
             data

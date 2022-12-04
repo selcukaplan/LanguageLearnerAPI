@@ -30,7 +30,7 @@ class UserController {
          try {
              const newUser = await UserController.#user.signUp(request.body);
              const newUserToken = await UserController.#createToken(newUser.id);
-             const responseData = ResponseController.getDataResponse(newUserToken)
+             const responseData = ResponseController.createResponseData(newUserToken)
              return response.status(StatusCodes.CREATED).json(responseData);
          } catch (error) {
              next(error);
@@ -41,7 +41,7 @@ class UserController {
          try {
              const user=await UserController.#user.login(request.body);
              const userToken=await UserController.#createToken(user.id);
-             const responseData=ResponseController.getDataResponse(userToken);
+             const responseData=ResponseController.createResponseData(userToken);
              return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
@@ -58,7 +58,7 @@ class UserController {
                 const currentUserForeignLanguages = currentUser.foreignLanguages;
                 const otherUsers=await UserController.#user.getModel()
                     .find({'foreignLanguages' : { $in : currentUserForeignLanguages}, "_id" : { $ne : currentUserId}});
-                const responseData = ResponseController.getDataResponse(otherUsers);
+                const responseData = ResponseController.createResponseData(otherUsers);
                 return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
@@ -70,7 +70,7 @@ class UserController {
             const currentUserId = UserController.getUserId(request);
             const friendsOfUser=await UserController.#user.getModel()
                 .findById(currentUserId).select('friends');
-            const responseData = ResponseController.getDataResponse(friendsOfUser);
+            const responseData = ResponseController.createResponseData(friendsOfUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -80,7 +80,7 @@ class UserController {
     static async getUsers(request,response,next) {
          try {
              const users = await UserController.#user.getModel().find();
-             const responseData = ResponseController.getDataResponse(users);
+             const responseData = ResponseController.createResponseData(users);
              return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
@@ -97,7 +97,7 @@ class UserController {
              }
              const oldUserInfo= await UserController.#user.getModel()
                  .findByIdAndUpdate(currentUserId,newUserInfo);
-             const responseData=ResponseController.getDataResponse(oldUserInfo)
+             const responseData=ResponseController.createResponseData(oldUserInfo)
              return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
@@ -112,7 +112,7 @@ class UserController {
              const currentUserId=UserController.getUserId(request);
              const updatedUser=await UserController.#user.getModel()
                  .findByIdAndUpdate(currentUserId,{$push: {"friends": newFriendId}});
-             const responseData=ResponseController.getDataResponse(updatedUser);
+             const responseData=ResponseController.createResponseData(updatedUser);
              return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
              next(error);
@@ -126,7 +126,7 @@ class UserController {
             const currentUserId=UserController.getUserId(request);
             const updatedUser=await UserController.#user.getModel()
                 .findByIdAndUpdate(currentUserId,{$pull:{"friends":{$in : [friendId]}}});
-            const responseData=ResponseController.getDataResponse(updatedUser);
+            const responseData=ResponseController.createResponseData(updatedUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
