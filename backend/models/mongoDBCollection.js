@@ -31,7 +31,7 @@ class MongoDBCollection {
         return new mongoose.model(this.#collectionName,this.#collectionSchema);
     }
 
-    isSubSetOfDefinitions(definitionsObject) {
+    isSubSetOfDefinitions(definitionsObject) { //Todo: unnecessary method will be removed
         if (Object.keys(definitionsObject).length === 0) {return false};
         for (let currentDefinition in definitionsObject) {
             if (!this.#collectionDefinitions.hasOwnProperty(currentDefinition)) {
@@ -43,11 +43,11 @@ class MongoDBCollection {
 
 
 
-    getRequiredDefinitionKeys() {
+    getRequiredDefinitionKeys() { //Todo: unnecessary method will be removed
         const requiredDefinitions=[]; // TODO: could be stored as a hash set instead of array
         for (let currentDefinition in this.#collectionDefinitions) {
             let currentObject=this.#collectionDefinitions[currentDefinition];
-            if (currentObject.hasOwnProperty("required") && currentObject["required"] === true) {
+            if (currentObject.hasOwnProperty("required") && currentObject["required"] !== false) {
                 requiredDefinitions.push(currentDefinition);
             }
         }
@@ -55,7 +55,7 @@ class MongoDBCollection {
     }
 
 
-     areRequiredKeysMatched(object) {
+     areRequiredKeysMatched(object) { //Todo: unnecessary method will be removed
         let requiredDefinitionKeys= this.getRequiredDefinitionKeys().sort(); // TODO: sort algorithm could be improved
         const objectKeys=Object.keys(object).sort();// TODO: sort algorithm could be improved
         return JSON.stringify(requiredDefinitionKeys) === JSON.stringify(objectKeys);
