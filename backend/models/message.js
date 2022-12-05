@@ -1,5 +1,5 @@
 
-const MongoDBCollection=require('mongoDBCollection');
+const MongoDBCollection=require('./mongoDBCollection');
 
 class Message extends  MongoDBCollection{
 
