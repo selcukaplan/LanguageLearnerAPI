@@ -17,9 +17,6 @@ class ConversationController {
     static async createConversation(request, response, next) {
         try {
             const membersBody=request.body;
-            if (!ConversationController.#conversation.areRequiredKeysMatched(membersBody)) {
-                throw new BadRequest('Conversation body is not valid!');
-            }
             const newConversation=await ConversationController.#conversation.getModel().create(membersBody);
             const responseData = ResponseController.createResponseData(newConversation);
             return response.status(StatusCodes.OK).json(responseData);
@@ -66,8 +63,6 @@ class ConversationController {
             next(error);
         }
     }
-
-//TODO: conversation router will be added and all controller methods will be tested
 
 }
 
