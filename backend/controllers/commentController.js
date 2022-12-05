@@ -11,6 +11,9 @@ class CommentController {
 
     //Todo: all return statements coming from the database will be checked for whether they returned error or not
 
+    //Todo: update queries return the previous state of  documents which is not wanted.
+    // Better approach should be found to get the updated state of  documents
+
     static #comment=new Comment();
 
 
