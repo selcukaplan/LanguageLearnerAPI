@@ -6,11 +6,11 @@ class Message extends  MongoDBCollection{
     static #messageName="Message";
 
     static #messageDefinitions = {
-        senderId: {
+        senderId: { //TODO: ref will be added for population
             type:String,
             required:true
         },
-        conversationId : {
+        conversationId : { //TODO: ref will be added for population
             type:String,
             required:true
         },

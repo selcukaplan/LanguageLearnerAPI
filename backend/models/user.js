@@ -44,7 +44,7 @@ class User  extends MongoDBCollection {
             type: Array,
             required:true,
         },
-        friends: {
+        friends: { //TODO: ref will be added for population
             //Todo: friendIds are unique that's why another data structure like
             // hash set must be used to store unique values instead of using array
             type:Array,

@@ -6,7 +6,7 @@ class Comment extends  MongoDBCollection{
    static #commentName="Comment";
 
     static #commentDefinitions = {
-        senderId: {
+        senderId: { //TODO: ref will be added for population
             type:String,
             required:true
         },

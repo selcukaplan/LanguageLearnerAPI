@@ -6,7 +6,7 @@ class Conversation extends  MongoDBCollection{
     static #conversationName="Conversation";
 
     static #conversationDefinitions = {
-        members: {
+        members: { //TODO: ref will be added for population
             // TODO: Index property can be added to decrease complexity
             //TODO: hash set can be used because members are unique
             type:Array,
