@@ -5,7 +5,6 @@ const {StatusCodes} = require('http-status-codes');
 const Message = require('../models/message');
 const ResponseController = require('./responseController');
 const UserController = require("./userController");
-const {BadRequest} = require("../errors");
 
 class MessageController {
 
@@ -25,6 +24,62 @@ class MessageController {
             next(error);
         }
     }
+
+
+    static async getMessagesWithOffsetPagination(request, response, next) {
+        try {
+            const conversationId = request.params.conversationId;
+            const {page = 1, limit = 5} = request.query;
+            const skipCount = (page - 1) * limit;
+            const messagesOfConversation = await MessageController.#message.getModel()
+                .find({conversationId})
+                .limit(limit)
+                .skip(skipCount)
+                .sort({'createdAt' : -1})
+            const totalMessages = await MessageController.#message.getModel().estimatedDocumentCount();
+            const totalPages = Math.ceil(totalMessages / limit);
+            const paginationInfo = {
+                messagesOfConversation,
+                totalPages,
+                currentPage: Number(page)
+            }
+            const responseData = ResponseController.createResponseData(paginationInfo);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+
+    static async getMessagesWithDateCursorPagination(request, response, next) {
+        try {
+            const conversationId = request.params.conversationId;
+            const {limit = 5, next = Date.now()} = request.query;
+            let nextCursorTimeStamp = next;
+            const messagesOfConversation = await MessageController.#message.getModel()
+                .find({conversationId, createdAt : {$lte : new Date(Number(nextCursorTimeStamp))}})
+                .limit(Number(limit) + 1)
+                .sort({createdAt : -1})
+            nextCursorTimeStamp=-1;
+            const isFinished=messagesOfConversation.length === 1;
+            if (!isFinished) {
+                const lastElement = messagesOfConversation[messagesOfConversation.length - 1];
+                nextCursorTimeStamp = lastElement && new Date(lastElement.createdAt).getTime();
+                messagesOfConversation.pop();
+            }
+            const paginationInfo = {
+                messagesOfConversation,
+                currentLimit : limit,
+                isFinished,
+                nextCursorTimeStamp
+            }
+            const responseData = ResponseController.createResponseData(paginationInfo);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
+
 
     static async getMessagesOfConversation(request, response, next) {
         try {
