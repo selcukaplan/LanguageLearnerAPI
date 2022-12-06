@@ -8,13 +8,13 @@ class MongoDBCollection {
 
     #collectionDefinitions;
 
-    #collectionOptions= {timestamps: true};
+    #collectionOptions;
 
     #collectionSchema=null;
 
     #collectionModel=null;
 
-    constructor(collectionName,collectionDefinitions,collectionOptions={}) {
+    constructor(collectionName,collectionDefinitions,collectionOptions = {timestamps: true}) {
         this.#collectionDefinitions=collectionDefinitions;
         this.#collectionOptions=collectionOptions;
         this.#collectionName=collectionName;
