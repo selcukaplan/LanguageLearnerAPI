@@ -33,10 +33,11 @@ class CommentController {
             const senderId = UserController.fetchUserIdFromRequest(request);
             const receiverId=request.params.receiverId;
             const commentBody = {senderId,receiverId,...request.body};
-            if (!CommentController.#comment.areRequiredKeysMatched(commentBody)) {
+            if (!CommentController.#comment.areRequiredDefinitionKeysMatched(commentBody)) {
                 throw new BadRequest('Comment body is not valid!');
             }
             const newComment=await CommentController.#comment.getModel().create({...commentBody});
+            if (!newComment) {throw new BadRequest('Create operation could not completed!')}
             const responseData=ResponseController.createResponseData(newComment);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
@@ -49,7 +50,9 @@ class CommentController {
         try {
             const senderId = UserController.fetchUserIdFromRequest(request);
             const commentId=request.params.commentId;
+            if (!commentId) {throw new BadRequest('Comment id is not found!')}
             const deletedComment=await CommentController.#comment.getModel().findOneAndDelete({senderId, _id : commentId});
+            if (!deletedComment) {throw new BadRequest('Delete operation could not completed!')}
             const responseData=ResponseController.createResponseData(deletedComment);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
@@ -66,8 +69,10 @@ class CommentController {
             }
             const senderId = UserController.fetchUserIdFromRequest(request);
             const commentId = request.params.commentId;
+            if (!commentId) {throw new BadRequest('Comment id is not found!')}
             const updatedComment = await CommentController.#comment.getModel()
                 .findOneAndUpdate({senderId, _id: commentId}, commentBody);
+            if (!updatedComment) {throw new BadRequest('Update operation could not completed!')}
             const responseData = ResponseController.createResponseData(updatedComment);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
