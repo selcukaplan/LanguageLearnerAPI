@@ -58,13 +58,13 @@ class User  extends MongoDBCollection {
 
 
 
-     async signUp(userObject) {
-        if (!this.areRequiredKeysMatched(userObject)) {
+     async signUp(newUserObject) {
+        if (!this.areRequiredDefinitionKeysMatched(newUserObject)) {
             throw new BadRequest('User object is not valid!')
         }
-        const {email,password} = userObject;
-        assert((email) && (password), "keys matched is not valid!");
-        if (!validator.isEmail(email)) {
+        const {email,password} = newUserObject;
+        assert((email) && (password), "precondition is not valid! Email or password  is not found!");
+        if (!validator.isEmail(email)) { //TODO: different mail checker could be used
             throw new BadRequest('Email is not valid!')
         }
         const exists = await this.getModel().findOne({email});
@@ -73,7 +73,10 @@ class User  extends MongoDBCollection {
          }
         const salt=await bcrypt.genSalt(10);
         const hash=await bcrypt.hash(password,salt);
-        const newUser=await this.getModel().create({...userObject,password : hash})
+        const newUser=await this.getModel().create({...newUserObject,password : hash})
+         if (!newUser) {
+             throw new BadRequest('New user could not be created! Please check your user body!');
+         }
         newUser.id=newUser._id;    //TODO: better approach could be used
         return newUser;
     }
