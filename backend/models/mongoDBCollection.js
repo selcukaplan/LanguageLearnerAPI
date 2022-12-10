@@ -27,11 +27,12 @@ class MongoDBCollection {
     }
 
     #createModel() {
-        assert(this.#collectionSchema !== null);
+        assert(this.#collectionSchema !== null,"model can not be created if  schema is null!");
         return new mongoose.model(this.#collectionName,this.#collectionSchema);
     }
 
-    isSubSetOfDefinitions(definitionsObject) { //Todo: unnecessary method will be removed
+
+    isSubSetOfDefinitions(definitionsObject) {
         if (Object.keys(definitionsObject).length === 0) {return false};
         for (let currentDefinition in definitionsObject) {
             if (!this.#collectionDefinitions.hasOwnProperty(currentDefinition)) {
@@ -43,22 +44,23 @@ class MongoDBCollection {
 
 
 
-    getRequiredDefinitionKeys() { //Todo: unnecessary method will be removed
-        const requiredDefinitions=[]; // TODO: could be stored as a hash set instead of array
+    getRequiredDefinitionKeys() {
+        const requiredDefinitionKeys=[];
         for (let currentDefinition in this.#collectionDefinitions) {
-            let currentObject=this.#collectionDefinitions[currentDefinition];
-            if (currentObject.hasOwnProperty("required") && currentObject["required"] !== false) {
-                requiredDefinitions.push(currentDefinition);
+            let currentDefinitionObject=this.#collectionDefinitions[currentDefinition];
+            if (currentDefinitionObject.hasOwnProperty("required")
+                && currentDefinitionObject["required"] !== false) {
+                requiredDefinitionKeys.push(currentDefinition);
             }
         }
-        return requiredDefinitions;
+        return requiredDefinitionKeys;
     }
 
 
-     areRequiredKeysMatched(object) { //Todo: unnecessary method will be removed
+     areRequiredDefinitionKeysMatched(definitionsObject) {
         let requiredDefinitionKeys= this.getRequiredDefinitionKeys().sort(); // TODO: sort algorithm could be improved
-        const objectKeys=Object.keys(object).sort();// TODO: sort algorithm could be improved
-        return JSON.stringify(requiredDefinitionKeys) === JSON.stringify(objectKeys);
+        const objectKeys=Object.keys(definitionsObject).sort();// TODO: sort algorithm could be improved
+        return JSON.stringify(requiredDefinitionKeys) === JSON.stringify(objectKeys); // Keys are compared
     }
 
     getModel() {
