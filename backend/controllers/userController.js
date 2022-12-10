@@ -51,8 +51,8 @@ class UserController {
          try {
                 const currentUserId = UserController.fetchUserIdFromRequest(request);
                 // Todo: foreign languages will be stored as a map in the database
-                let currentUser=await UserController.#user.getModel()
-                    .findById(currentUserId).lean();
+                const currentUser=await UserController.#user.getModel()
+                    .findById(currentUserId)
                 if (!currentUser || !currentUser.foreignLanguages) {throw new BadRequest('Current user is not valid!')}
                 const otherUsers=await UserController.#user.getModel()
                     .find({'foreignLanguages' : { $in :  currentUser.foreignLanguages}, "_id" : { $ne : currentUserId}});
