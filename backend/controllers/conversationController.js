@@ -45,8 +45,10 @@ class ConversationController {
         try {
             const conversationId=request.params.conversationId;
             const newMembers = request.body.members;
+            if (!newMembers || !conversationId) {throw new BadRequest('conversation definitions are not valid!')};
             const updatedConversation=await ConversationController.#conversation.getModel()
-                .findByIdAndUpdate(conversationId,{$push : {$each : {"members" : newMembers}}});
+                .findByIdAndUpdate(conversationId,{$push : {"members": {$each : newMembers}}}); //TODO: will check
+            if (!updatedConversation) {throw new BadRequest('conversation could not be updated!')};
             const responseData=ResponseController.createResponseData(updatedConversation);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
