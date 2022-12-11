@@ -36,7 +36,8 @@ class MessageController {
                 .limit(limit)
                 .skip(skipCount)
                 .sort({'createdAt' : -1})
-            const totalMessages = await MessageController.#message.getModel().estimatedDocumentCount();
+            if (!messagesOfConversation) {throw new BadRequest('messages of conversation is not found!')}
+            const totalMessages = await MessageController.#message.getModel().countDocuments({conversationId});
             const totalPages = Math.ceil(totalMessages / limit);
             const paginationInfo = {
                 messagesOfConversation,
