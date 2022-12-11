@@ -7,8 +7,6 @@ const {UnAuthenticated,BadRequest} = require("../errors");
 
 class UserController {
 
-    //Todo: all return statements coming from the database will be checked for whether they returned error or not
-
     static #user=new User();
 
      static async #createToken(userInfo) {
@@ -54,10 +52,10 @@ class UserController {
                 const currentUserId = UserController.fetchUserIdFromRequest(request);
                 // Todo: foreign languages will be stored as a map in the database
                 const currentUser=await UserController.#user.getModel()
-                    .findById(currentUserId);
-                const currentUserForeignLanguages = currentUser.foreignLanguages;
+                    .findById(currentUserId)
+                if (!currentUser || !currentUser.foreignLanguages) {throw new BadRequest('Current user is not valid!')}
                 const otherUsers=await UserController.#user.getModel()
-                    .find({'foreignLanguages' : { $in : currentUserForeignLanguages}, "_id" : { $ne : currentUserId}});
+                    .find({'foreignLanguages' : { $in :  currentUser.foreignLanguages}, "_id" : { $ne : currentUserId}});
                 const responseData = ResponseController.createResponseData(otherUsers);
                 return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
@@ -90,13 +88,14 @@ class UserController {
 
     static async updateUser(request,response,next) {
          try {
-             const currentUserId=UserController.fetchUserIdFromRequest(request);
-             const newUserInfo=request.body;
-             if (!UserController.#user.isSubSetOfDefinitions(newUserInfo)) {
+             const newUserDefinitions=request.body;
+             if (!UserController.#user.isSubSetOfDefinitions(newUserDefinitions)) {
                  throw new BadRequest('User body is not valid!');
              }
+             const currentUserId=UserController.fetchUserIdFromRequest(request);
              const oldUserInfo= await UserController.#user.getModel()
-                 .findByIdAndUpdate(currentUserId,newUserInfo);
+                 .findByIdAndUpdate(currentUserId,newUserDefinitions);
+             if (!oldUserInfo) {throw new BadRequest('Update operation is not successful!')}
              const responseData=ResponseController.createResponseData(oldUserInfo)
              return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
@@ -112,6 +111,7 @@ class UserController {
              const currentUserId=UserController.fetchUserIdFromRequest(request);
              const updatedUser=await UserController.#user.getModel()
                  .findByIdAndUpdate(currentUserId,{$push: {"friends": newFriendId}});
+             if (!updatedUser) {throw new BadRequest('Add friend operation is not successful!')}
              const responseData=ResponseController.createResponseData(updatedUser);
              return response.status(StatusCodes.OK).json(responseData);
          } catch (error) {
@@ -126,6 +126,7 @@ class UserController {
             const currentUserId=UserController.fetchUserIdFromRequest(request);
             const updatedUser=await UserController.#user.getModel()
                 .findByIdAndUpdate(currentUserId,{$pull:{"friends":{$in : [friendId]}}});
+            if (!updatedUser) {throw new BadRequest('Remove friend operation is not successful!')}
             const responseData=ResponseController.createResponseData(updatedUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {

@@ -4,6 +4,7 @@ const {UnAuthenticated} = require("../errors")
 const jwt = require("jsonwebtoken");
 
 const dotenv=require('dotenv');
+const assert = require("assert");
 
 dotenv.config();
 
@@ -18,9 +19,13 @@ async function  authenticateTheUser(request,response,next) {
         if (!isHeaderValid(authorization)) {
             throw new UnAuthenticated('Authentication Header is invalid!');
         }
-        const encryptedToken = authorization.split(' ')[1];
+        const authorizationArray=authorization.split(' ');
+        assert(authorizationArray.length >= 2,"isHeaderValid precondition is not valid!");
+        const encryptedToken = authorizationArray[1];
         const userToken = await jwt.verify(encryptedToken, process.env.JWT_SECRET);
-        request.user = userToken.userInfo; // Todo: does 'userInfo' exist or not,checker could be added
+        const {userInfo}  = userToken;
+        if (!userInfo) {throw new UnAuthenticated('token does not contain user info!')}
+        request.user =userInfo;
         next();
     } catch (error) {
         const errorClassName=error.constructor.name;
