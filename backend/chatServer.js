@@ -63,7 +63,7 @@ class ChatServer {
 
 
      #connectionHandler(webSocket) {
-        const userId=webSocket.user; // it will webSocket.userId from middleware
+        const userId=webSocket.user;
         this.#addOnlineUser(userId);
         console.log(`a user whose id = ${userId} is connected`);
         webSocket.on('joinConversation', ({conversationId}) =>  this.#joinTheConversation(webSocket,conversationId,userId));

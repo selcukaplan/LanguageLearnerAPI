@@ -35,7 +35,7 @@ class User  extends MongoDBCollection {
         },
         foreignLanguages: {
             //Todo: foreign languages are unique that's why another data structure like
-            // hash set must be used to store unique values instead of using array
+            // hash set or map must be used to store unique values instead of using array
             type: Array,
             required:true,
         },

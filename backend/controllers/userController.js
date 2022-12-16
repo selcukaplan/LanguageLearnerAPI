@@ -50,7 +50,7 @@ class UserController {
     static async getUsersHasSameForeignLanguages(request, response, next) {
          try {
                 const currentUserId = UserController.fetchUserIdFromRequest(request);
-                // Todo: foreign languages will be stored as a map in the database
+                // Todo: foreign languages will be stored as an enum type in the database
                 const currentUser=await UserController.#user.getModel()
                     .findById(currentUserId)
                 if (!currentUser || !currentUser.foreignLanguages) {throw new BadRequest('Current user is not valid!')}
