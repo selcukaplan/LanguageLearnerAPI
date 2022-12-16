@@ -4,17 +4,15 @@ const http=require('http');
 
 const {Server} = require('socket.io');
 
-const jwt = require("jsonwebtoken");
-
 const dotenv=require('dotenv');
-
-const {UnAuthenticated} = require("./errors");
 
 dotenv.config();
 
 const MessageController = require("./controllers/messageController");
 
 const ConversationController=require('./controllers/conversationController');
+
+const {authenticateTheUserForWebSocket} = require('./middlewares/authentication');
 
 const defaultPort=process.env.PORT_WEBSOCKET || 8081;
 
@@ -48,28 +46,11 @@ class ChatServer {
 
     start() {
         this.#server.listen(this.#port,() => {console.log(`chat server listening on port ${this.#port}`)});
-        this.#io.use(this.#authenticateTheWebSocket);
+        this.#io.use(authenticateTheUserForWebSocket);
         this.#io.on('connection',(webSocket) => this.#connectionHandler(webSocket));
 
     }
 
-    async #authenticateTheWebSocket(webSocket,next) { // Todo: will be added to the authentication middleware folder
-        try {
-            if (!webSocket.handshake.headers || !webSocket.handshake.headers.token) {
-                throw new UnAuthenticated('token not found!')
-            }
-            const encryptedToken = webSocket.handshake.headers.token;
-            const userToken = await jwt.verify(encryptedToken, process.env.JWT_SECRET);
-            const {userInfo} = userToken;
-            if (!userInfo) {
-                throw new UnAuthenticated('token does not contain user info!')
-            }
-            webSocket.user = userInfo;
-            next();
-        } catch (error) {
-            next(error);
-        }
-    }
 
     #addOnlineUser(userId) {
         this.#onlineUsers[userId] = true; // like hash set
