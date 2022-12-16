@@ -11,6 +11,10 @@ class ConversationController {
 
     static #conversation=new Conversation();
 
+    static getConversation(){
+        return ConversationController.#conversation;
+    }
+
 
     static async createConversation(request, response, next) {
         try {
@@ -46,8 +50,7 @@ class ConversationController {
             const conversationId=request.params.conversationId;
             const newMembers = request.body.members;
             if (!newMembers || !conversationId) {throw new BadRequest('conversation definitions are not valid!')};
-            const updatedConversation=await ConversationController.#conversation.getModel()
-                .findByIdAndUpdate(conversationId,{$push : {"members": {$each : newMembers}}}); //TODO: will check
+            const updatedConversation= ConversationController.#conversation.addMembersToConversation(conversationId,newMembers);
             if (!updatedConversation) {throw new BadRequest('conversation could not be updated!')};
             const responseData=ResponseController.createResponseData(updatedConversation);
             return response.status(StatusCodes.OK).json(responseData);
@@ -62,8 +65,7 @@ class ConversationController {
             const conversationId=request.params.conversationId;
             const deletedMembers= request.body.members;
             if (!deletedMembers || !conversationId) {throw new BadRequest('conversation definitions are not valid!')};
-            const updatedConversation=await ConversationController.#conversation.getModel()
-                .findByIdAndUpdate(conversationId,{ $pull : {"members" :  {$in : deletedMembers}}});
+            const updatedConversation=ConversationController.#conversation.removeMembersFromConversation(conversationId,deletedMembers);
             //Todo: if members length smaller than two, conversation  will  be deleted automatically
             if (!updatedConversation) {throw new BadRequest('conversation could not be updated!')};
             const responseData=ResponseController.createResponseData(updatedConversation);

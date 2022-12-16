@@ -1,5 +1,6 @@
 
 const MongoDBCollection=require('./mongoDBCollection');
+const {BadRequest} = require("../errors");
 
 class Conversation extends  MongoDBCollection{
 
@@ -20,11 +21,25 @@ class Conversation extends  MongoDBCollection{
 
     }
 
-
     constructor(collectionName=Conversation.#conversationName,
                 collectionDefinitions = Conversation.#conversationDefinitions) {
         super(collectionName,collectionDefinitions);
     }
+
+    async addMembersToConversation(conversationId,newMembers) {
+       const updatedConversation =await this.getModel()
+           .findByIdAndUpdate(conversationId,{$push : {"members": {$each : newMembers}}});
+        if (!updatedConversation) {throw new BadRequest('conversation could not be updated!')}
+        return updatedConversation;
+
+    }
+
+    async removeMembersFromConversation(conversationId,removedMembers) {
+        await this.getModel()
+            .findByIdAndUpdate(conversationId,{ $pull : {"members" :  {$in : removedMembers}}});
+
+    }
+
 
 
 }
