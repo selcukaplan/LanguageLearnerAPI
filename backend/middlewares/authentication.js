@@ -9,6 +9,8 @@ const assert = require("assert");
 
 dotenv.config();
 
+//Todo: token expiration time will be added
+
 function isHeaderValid(authorizationHeader) {
     return (authorizationHeader && authorizationHeader.startsWith('Bearer') &&
         authorizationHeader.split(' ').length >= 2);
