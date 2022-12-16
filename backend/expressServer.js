@@ -48,7 +48,7 @@ class ExpressServer {
 
     async start() {
         this.#expressApp.listen(this.#port, () => {
-            console.log(`app is started for listening on port ${this.#port}`);
+            console.log(`express server is started for listening on port ${this.#port}`);
         })
     }
 

@@ -44,7 +44,7 @@ class ChatServer {
     }
 
     start() {
-        this.#server.listen(this.#port,() => {console.log(`chat server listening on port ${this.#port}`)});
+        this.#server.listen(this.#port,() => {console.log(`chat server is started for listening on port ${this.#port}`)});
         this.#io.use(authenticateTheUserForWebSocket);
         this.#io.on('connection',(webSocket) => this.#connectionHandler(webSocket));
 
