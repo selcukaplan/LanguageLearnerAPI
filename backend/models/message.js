@@ -70,12 +70,14 @@ class Message extends  MongoDBCollection{
 
 
     async createMessage(senderId,conversationId,text) {
-        await this.getModel().create({senderId,conversationId,text})
+        const newMessage =await this.getModel().create({senderId,conversationId,text})
+        return newMessage;
     }
 
     async removeMessage(messageId,userId) {
-       await this.getModel()
+       const removedMessage = await this.getModel()
             .findOneAndDelete({userId, _id : messageId});
+       return removedMessage;
     }
 }
 
