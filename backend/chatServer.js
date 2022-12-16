@@ -6,16 +6,15 @@ const {Server} = require('socket.io');
 
 const dotenv=require('dotenv');
 
-dotenv.config();
-
-const MessageController = require("./controllers/messageController");
-
-const ConversationController=require('./controllers/conversationController');
-
 const {authenticateTheUserForWebSocket} = require('./middlewares/authentication');
+
+const Message = require("./models/message");
+
+const Conversation = require("./models/conversation");
 
 const defaultPort=process.env.PORT_WEBSOCKET || 8081;
 
+dotenv.config();
 
 //Todo: custom error methods for char server  will be created
 
@@ -28,8 +27,8 @@ class ChatServer {
     #io;
     #server;
     #port;
-    static #message = MessageController.getMessage(); //Todo: model will be used
-    static #conversation=ConversationController.getConversation(); //Todo: model will be used
+    static #message = new Message();
+    static #conversation=new Conversation();
     #onlineUsers;
 
     constructor(server,port=defaultPort) {
