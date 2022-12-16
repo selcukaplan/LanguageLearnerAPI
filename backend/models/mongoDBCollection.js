@@ -28,7 +28,9 @@ class MongoDBCollection {
 
     #createModel() {
         assert(this.#collectionSchema !== null,"model can not be created if  schema is null!");
-        return new mongoose.model(this.#collectionName,this.#collectionSchema);
+        // If model exists, don't create it again!!!!
+        const model= mongoose.models[this.#collectionName] || mongoose.model(this.#collectionName,this.#collectionSchema)
+        return model;
     }
 
 
