@@ -29,11 +29,6 @@ class User  extends MongoDBCollection {
             type:String,
             default:""
         },
-        avatarUrl : {
-            type:String,
-            default:"/avatarUrls/defaultAvatar.jpg" // TODO: default image will be added and path could be changed
-
-        },
         nativeLanguage: {
             type: String,
             required:true,
