@@ -9,7 +9,7 @@ dotenv.config();
 
 const cors=require('cors');
 
-const defaultPort=8000;
+const defaultPort=8080;
 
 
 class ExpressServer {
@@ -27,7 +27,7 @@ class ExpressServer {
     }
 
     static createServerFromConfig() {
-        const configPort= Number(process.env.PORT) || defaultPort;
+        const configPort= Number(process.env.PORT_HTTP) || defaultPort;
         return new ExpressServer(configPort);
     }
 
@@ -50,6 +50,10 @@ class ExpressServer {
         this.#expressApp.listen(this.#port, () => {
             console.log(`app is started for listening on port ${this.#port}`);
         })
+    }
+
+    getExpressApp() {
+        return this.#expressApp;
     }
 
 }
