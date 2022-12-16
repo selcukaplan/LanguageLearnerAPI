@@ -35,8 +35,9 @@ class Conversation extends  MongoDBCollection{
     }
 
     async removeMembersFromConversation(conversationId,removedMembersList) {
-        await this.getModel()
+        const updatedConversation= await this.getModel()
             .findByIdAndUpdate(conversationId,{ $pull : {"members" :  {$in : removedMembersList}}});
+        return updatedConversation;
 
     }
 
