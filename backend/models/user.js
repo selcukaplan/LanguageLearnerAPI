@@ -29,18 +29,13 @@ class User  extends MongoDBCollection {
             type:String,
             default:""
         },
-        avatarUrl : {
-            type:String,
-            default:"/avatarUrls/defaultAvatar.jpg" // TODO: default image will be added and path could be changed
-
-        },
         nativeLanguage: {
             type: String,
             required:true,
         },
         foreignLanguages: {
             //Todo: foreign languages are unique that's why another data structure like
-            // hash set must be used to store unique values instead of using array
+            // hash set or map must be used to store unique values instead of using array
             type: Array,
             required:true,
         },

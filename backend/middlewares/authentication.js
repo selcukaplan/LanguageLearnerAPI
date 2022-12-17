@@ -4,16 +4,19 @@ const {UnAuthenticated} = require("../errors")
 const jwt = require("jsonwebtoken");
 
 const dotenv=require('dotenv');
+
 const assert = require("assert");
 
 dotenv.config();
+
+//Todo: token expiration time will be added
 
 function isHeaderValid(authorizationHeader) {
     return (authorizationHeader && authorizationHeader.startsWith('Bearer') &&
         authorizationHeader.split(' ').length >= 2);
 }
 
-async function  authenticateTheUser(request,response,next) {
+async function  authenticateTheUserForHTTP(request,response,next) {
     try {
         const {authorization} = request.headers;
         if (!isHeaderValid(authorization)) {
@@ -37,4 +40,22 @@ async function  authenticateTheUser(request,response,next) {
 
 }
 
-module.exports = authenticateTheUser;
+async function authenticateTheUserForWebSocket(webSocket, next) {
+    try {
+        if (!webSocket.handshake.headers || !webSocket.handshake.headers.token) {
+            throw new UnAuthenticated('token not found!')
+        }
+        const encryptedToken = webSocket.handshake.headers.token;
+        const userToken = await jwt.verify(encryptedToken, process.env.JWT_SECRET);
+        const {userInfo} = userToken;
+        if (!userInfo) {
+            throw new UnAuthenticated('token does not contain user info!')
+        }
+        webSocket.user = userInfo;
+        next();
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = {authenticateTheUserForHTTP,authenticateTheUserForWebSocket};

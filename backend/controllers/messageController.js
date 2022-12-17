@@ -11,6 +11,10 @@ class MessageController {
 
     static #message=new Message();
 
+    static getMessage(){
+        return MessageController.#message;
+    }
+
 
     static async createMessage(request, response, next) {
         try {
@@ -33,20 +37,8 @@ class MessageController {
         try {
             const conversationId = request.params.conversationId;
             const {page = 1, limit = 5} = request.query;
-            const skipCount = (page - 1) * limit;
-            const messagesOfConversation = await MessageController.#message.getModel()
-                .find({conversationId})
-                .limit(limit)
-                .skip(skipCount)
-                .sort({'createdAt' : -1})
-            if (!messagesOfConversation) {throw new BadRequest('messages of conversation is not found!')}
-            const totalMessages = await MessageController.#message.getModel().countDocuments({conversationId});
-            const totalPages = Math.ceil(totalMessages / limit);
-            const paginationInfo = {
-                messagesOfConversation,
-                totalPages,
-                currentPage: Number(page)
-            }
+            const paginationInfo = await MessageController.#message
+                .getMessagesWithOffsetPagination(conversationId,page,limit)
             const responseData = ResponseController.createResponseData(paginationInfo);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
@@ -59,25 +51,8 @@ class MessageController {
         try {
             const conversationId = request.params.conversationId;
             const {limit = 5, next = Date.now()} = request.query;
-            let nextCursorTimeStamp = next;
-            const messagesOfConversation = await MessageController.#message.getModel()
-                .find({conversationId, createdAt : {$lte : new Date(Number(nextCursorTimeStamp))}})
-                .limit(Number(limit) + 1)
-                .sort({createdAt : -1})
-            if (!messagesOfConversation) {throw new BadRequest('messages of conversation is not found!')}
-            nextCursorTimeStamp=-1;
-            const isFinished=messagesOfConversation.length === 1;
-            if (!isFinished) {
-                const lastElement = messagesOfConversation[messagesOfConversation.length - 1];
-                nextCursorTimeStamp = lastElement && new Date(lastElement.createdAt).getTime();
-                messagesOfConversation.pop();
-            }
-            const paginationInfo = {
-                messagesOfConversation,
-                currentLimit : limit,
-                isFinished,
-                nextCursorTimeStamp
-            }
+            const paginationInfo =await  MessageController.#message
+                .getMessagesWithDateCursorPagination(conversationId,limit,next);
             const responseData = ResponseController.createResponseData(paginationInfo);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
