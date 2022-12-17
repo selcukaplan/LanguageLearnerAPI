@@ -7,7 +7,7 @@
 based on their choices they can communicate with the others who choose the same ones. 
 - While chatting with each other, they will be able to see the meanings of the words in their native language 
 by hovering over the text.
-- they will be able to comment on other users' profiles.
+- Users will be able to comment on other users' profiles.
 
 ## STRUCTURE
 
