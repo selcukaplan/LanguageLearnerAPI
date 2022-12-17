@@ -5,7 +5,7 @@
 - Language Learner API is the backend side of the mern stack project that is not completed yet.
 - In the application, users will register the system by choosing the foreign languages they want to learn and 
 based on their choices they can communicate with the others who choose the same ones. 
-- While users are chatting with each other, they will be able to see the meanings of the words in their native language 
+- While users are chatting each other, they will be able to see the meanings of the words in their native language 
 by hovering over the text.
 - Users will be able to comment on other users' profiles.
 
