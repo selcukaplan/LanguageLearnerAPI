@@ -3,3 +3,4 @@ backend/*.xml
 .env
 *.iml
 .idea
+.auth
