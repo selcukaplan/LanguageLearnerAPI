@@ -1,4 +1,5 @@
 typescript-version/node_modules
+typescript-version/build
 backend/node_modules
 backend/*.xml
 .env
