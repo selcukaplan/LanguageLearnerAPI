@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "test": "tsc -w",
-    "start": "node ./build/main.js"
+    "start": "nodemon ./build/main.js"
   },
   "keywords": [],
   "author": "",
