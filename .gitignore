@@ -1,5 +1,6 @@
 typescript-version/node_modules
-typescript-version/src/*.js
+typescript-version/src/**/*.js
+typescript-version/src/**/*.js.map
 typescript-version/build
 backend/node_modules
 backend/*.xml
