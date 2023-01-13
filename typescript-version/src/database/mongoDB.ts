@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 export default class MongoDB {
 
-    static async connect(mongoURI: string,options: object ={}): Promise<object> {
+    static async connect(mongoURI: string = process.env.MONGO_URI,options: object ={}): Promise<string> {
         let isOptionsEmpty=Object.entries(options).length === 0;
         mongoose.set("strictQuery", false);
         let connectionObject: object;
@@ -14,8 +14,7 @@ export default class MongoDB {
         } else {
             connectionObject = await mongoose.connect(mongoURI,options);
         }
-        console.log("Connected to the MongoDB successfully");
-        return connectionObject;
+        return Promise.resolve("connected to MongoDB successfully");
     }
 
 }
