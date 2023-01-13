@@ -4,7 +4,7 @@ typescript-version/src/**/*.js.map
 typescript-version/build
 backend/node_modules
 backend/*.xml
-.env
+typescript-version/.env
 *.iml
 .idea
 .auth
