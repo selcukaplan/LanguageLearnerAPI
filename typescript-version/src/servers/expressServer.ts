@@ -44,10 +44,9 @@ export default class ExpressServer {
         this.expressServer.use(path,requestHandler);
     }
 
-     start(): void {
-        this.expressServer.listen(this.port, () => {
-            console.log(`express server is started for listening on port ${this.port}`);
-        })
+     async start(): Promise<string> {
+        await this.expressServer.listen(this.port);
+        return "express server is started for listening on port " +  this.port;
     }
 
 }
