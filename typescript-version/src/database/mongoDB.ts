@@ -14,7 +14,8 @@ export default class MongoDB {
         } else {
             connectionObject = await mongoose.connect(mongoURI,options);
         }
-        return Promise.resolve("connected to MongoDB successfully");
+        return "connected to MongoDB successfully";
     }
+
 
 }
