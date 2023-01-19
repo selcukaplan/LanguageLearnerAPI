@@ -29,8 +29,9 @@ export default abstract class MongoDBCollection<DocumentInterface> {
 
     private createModel() {
         assert(this.collectionSchema," model can not be created if  schema is undefined!");
-        // If model exists, It does not create the same model again  ---> to prevent that error
-        const model:Model<DocumentInterface> = mongoose.models[this.collectionName] || mongoose.model(this.collectionName,this.collectionSchema)
+        const model:Model<DocumentInterface> = mongoose.models[this.collectionName]
+            || mongoose.model(this.collectionName,this.collectionSchema)
+        // If model exists, It does not create the same model again
         return model;
     }
 
