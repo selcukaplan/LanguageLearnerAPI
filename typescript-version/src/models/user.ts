@@ -5,7 +5,7 @@
 
 import MongoDBCollection from "./mongoDBcollection";
 
-import { Model} from 'mongoose';
+import { Model,Types} from 'mongoose';
 
 import validator from "validator";
 
@@ -13,6 +13,7 @@ import bcrypt from "bcrypt";
 
 
 export interface IUser {
+    _id : Types.ObjectId;
     email:string;
     password:string;
     birthDay:Date;
