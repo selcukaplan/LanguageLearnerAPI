@@ -11,7 +11,11 @@ import AuthorizationService, {AuthenticatedRequest} from "../services/authorizat
 
 import UnAuthenticated from "../errors/httpErrors/unAuthenticated";
 
-class UserController {
+export interface UserPayload  {
+    userId: string;
+}
+
+export default class UserController {
 
     private static userModel: User;
 
