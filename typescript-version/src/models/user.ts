@@ -79,22 +79,33 @@ export default class User  extends MongoDBCollection<IUser> {
     }
 
      async signUp (user:IUser): Promise<IUser> {
-        const {email,password} = user;
-        if (!validator.isEmail(email)) {
-           throw new Error('Email is not valid!');
+        try {
+            const {email, password} = user;
+            if (!email || !password) {
+                throw new BadRequest("Email or password is undefined!");
+            }
+            if (!validator.isEmail(email)) {
+                throw new UnAuthenticated('Email is not valid!');
+            }
+            const userModel: Model<IUser> = this.getModel();
+            const userIdObject = await userModel.exists({email});
+            if (userIdObject) {
+                throw new UnAuthenticated('Email is already used');
+            }
+            const salt: string = await bcrypt.genSalt(10);
+            const hashPassword: string = await bcrypt.hash(password, salt);
+            const newUserObject: IUser | null = await userModel.create({...user, password: hashPassword})
+            if (!newUserObject) {
+                throw new UnAuthenticated('New user could not be created! Please check your user input!');
+            }
+            return newUserObject;
+        } catch (error) {
+            let errorName: string = (error as Error).constructor.name;
+            if (errorName === "ValidationError") {
+                throw new BadRequest((error as Error).message);
+            }
+            throw error;
         }
-        const userModel: Model<IUser> = this.getModel();
-        const userIdObject= await userModel.exists({email});
-        if (userIdObject) {
-            throw new Error('Email is already used');
-         }
-        const salt: string =await bcrypt.genSalt(10);
-        const hashPassword: string=await bcrypt.hash(password,salt);
-        const newUserObject: IUser | null = await userModel.create({...user,password : hashPassword})
-         if (!newUserObject) {
-             throw new Error('New user could not be created! Please check your user input!');
-         }
-        return newUserObject;
     }
 
 
@@ -102,12 +113,12 @@ export default class User  extends MongoDBCollection<IUser> {
         const userModel:Model<IUser> = this.getModel();
         const userObject: IUser | null = await userModel.findOne({email});
         if (!userObject) {
-            throw new Error('Invalid email');
+            throw new UnAuthenticated('Invalid email');
         }
         const hashPassword: string  = userObject.password;
         const isMatch: boolean =await bcrypt.compare(password,hashPassword);
         if (!isMatch) {
-            throw new Error('Invalid password');
+            throw new UnAuthenticated('Invalid password');
         }
         return userObject;
     }
@@ -115,7 +126,7 @@ export default class User  extends MongoDBCollection<IUser> {
     async getUsersWithSameForeignLanguages(currentUserId : string): Promise<Array<IUser>> {
         const currentUser: IUser | null= await this.getModel().findById(currentUserId);
         if (!currentUser) {
-            throw new Error('current user is not found!');
+            throw new BadRequest('current user is not found!');
         }
         const foreignLanguages = currentUser.foreignLanguages;
         const otherUsers: Array<IUser> = await this.getModel()
@@ -128,7 +139,7 @@ export default class User  extends MongoDBCollection<IUser> {
     async getFriends(userId: string): Promise<Array<string>> {
         const userObject : IUser | null = await this.getModel().findById(userId).select("friends");
         if (!userObject) {
-            throw new Error("user's friends are not found!");
+            throw new BadRequest("user's friends are not found!");
         }
         const friends=userObject.friends;
         return friends;
@@ -142,11 +153,11 @@ export default class User  extends MongoDBCollection<IUser> {
 
     async updateUser(userId: string, userBody: object) : Promise<IUser> {
         if (!this.isSubSetOfDefinitions(userBody)) {
-            throw new Error('user body is not valid!');
+            throw new BadRequest('user body is not valid!');
         }
         const updatedUser : (IUser | null) = await this.getModel().findByIdAndUpdate(userId, userBody,{new : true});
         if (!updatedUser) {
-            throw new Error('user is not updated!');
+            throw new BadRequest('user is not updated!');
         }
         return updatedUser;
     }
@@ -158,7 +169,7 @@ export default class User  extends MongoDBCollection<IUser> {
             .findByIdAndUpdate(userId,{$addToSet: {"friends": newFriendId}},
                 {new : true});
         if (!updatedUser) {
-            throw new Error('friends can not be added to the user');
+            throw new BadRequest('friends can not be added to the user');
         }
         return updatedUser;
 
@@ -168,7 +179,7 @@ export default class User  extends MongoDBCollection<IUser> {
         const updatedUser  : (IUser | null) = await this.getModel().findByIdAndUpdate(userId,
             {$pull : {"friends" : removedFriendId}}, {new : true})
         if (!updatedUser) {
-            throw new Error('friends can not be added to the user');
+            throw new  BadRequest('friends can not be added to the user');
         }
         return updatedUser;
     }
