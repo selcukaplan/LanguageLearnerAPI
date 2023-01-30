@@ -14,10 +14,15 @@ export interface AuthenticatedSocket extends Socket {
 
 }
 
-class AuthorizationService {
+export default class AuthorizationService {
 
-    static  createToken(userObject :object): string {
-        return jwt.sign(userObject, process.env.JWT_SECRET,
+    static  createToken(payload : object | string): string {
+        if (typeof payload === "string") {
+            // string payloads can not have a lifetime option.
+            return jwt.sign(payload,process.env.JWT_SECRET!);
+        }
+
+        return jwt.sign(payload, process.env.JWT_SECRET!,
             {expiresIn: process.env.JWT_LIFETIME}
         );
     }
