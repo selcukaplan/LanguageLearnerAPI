@@ -19,16 +19,18 @@ export default class UserController {
 
     private static userModel: User;
 
-    /*
-    static fetchUserIdFromRequest(request : Request) {
-        const userId=request.headers.authorization;
+    static fetchUserIdFromRequest(request : AuthenticatedRequest): string {
+        const payload : object | string | undefined = request.payload;
+        if (typeof payload === 'string' || !payload) {
+            throw new UnAuthenticated("Invalid payload!");
+        }
+        const userId =(payload as UserPayload)['userId'];
         if (!userId) {
-            throw new Error('Authentication was not provided!');
-            //throw new UnAuthenticated('Authentication was not provided!');
+            throw new UnAuthenticated('Authentication was not provided!');
         }
         return userId;
     }
-    */
+
 
     static async signUpUser(request: Request,response: Response,next: NextFunction) {
         try {
