@@ -94,6 +94,7 @@ export default class User  extends MongoDBCollection<IUser> {
         return newUserObject;
     }
 
+
     async login( email: string, password: string): Promise<IUser> {
         const userModel:Model<IUser> = this.getModel();
         const userObject: IUser | null = await userModel.findOne({email});
@@ -108,7 +109,7 @@ export default class User  extends MongoDBCollection<IUser> {
         return userObject;
     }
 
-    async getUsersWithSameForeignLanguages(currentUserId : number): Promise<Array<IUser>> {
+    async getUsersWithSameForeignLanguages(currentUserId : string): Promise<Array<IUser>> {
         const currentUser: IUser | null= await this.getModel().findById(currentUserId);
         if (!currentUser) {
             throw new Error('current user is not found!');
@@ -121,7 +122,7 @@ export default class User  extends MongoDBCollection<IUser> {
 
     }
 
-    async getFriends(userId: number): Promise<Array<number>> {
+    async getFriends(userId: string): Promise<Array<string>> {
         const userObject : IUser | null = await this.getModel().findById(userId).select("friends");
         if (!userObject) {
             throw new Error("user's friends are not found!");
@@ -136,7 +137,7 @@ export default class User  extends MongoDBCollection<IUser> {
 
     }
 
-    async updateUser(userId: number, userBody: object) : Promise<IUser> {
+    async updateUser(userId: string, userBody: object) : Promise<IUser> {
         if (!this.isSubSetOfDefinitions(userBody)) {
             throw new Error('user body is not valid!');
         }
@@ -146,6 +147,8 @@ export default class User  extends MongoDBCollection<IUser> {
         }
         return updatedUser;
     }
+
+    async addFriendToUser(userId: string, newFriendId: string) : Promise<IUser> {
 
         // $addToSet is used to add a value to an array unless the value is already present
         const updatedUser : (IUser | null) = await this.getModel()
@@ -158,9 +161,9 @@ export default class User  extends MongoDBCollection<IUser> {
 
     }
 
-    async removeFriendsFromUser(userId : number, removedFriends: Array<number>) : Promise<IUser> {
+    async removeFriendFromUser(userId: string, removedFriendId: string) : Promise<IUser> {
         const updatedUser  : (IUser | null) = await this.getModel().findByIdAndUpdate(userId,
-            {$pull : {"friends" : {$in : removedFriends}}}, {new : true})
+            {$pull : {"friends" : removedFriendId}}, {new : true})
         if (!updatedUser) {
             throw new Error('friends can not be added to the user');
         }
