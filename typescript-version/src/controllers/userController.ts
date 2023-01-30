@@ -34,9 +34,9 @@ export default class UserController {
 
     static async signUpUser(request: Request,response: Response,next: NextFunction) {
         try {
-            const newUser = await UserController.userModel.signUp(request.body);
-            const newUserToken = await UserController.createToken(newUser._id);
-            const responseData = ResponseController.createResponseData(newUserToken)
+            const newUser: IUser = await UserController.userModel.signUp(request.body);
+            const newUserToken: string = AuthorizationService.createToken({userId : newUser._id});
+            const responseData: ResponseData<string> = ResponseService.createResponseData(newUserToken);
             return response.status(StatusCodes.CREATED).json(responseData);
         } catch (error) {
             next(error);
