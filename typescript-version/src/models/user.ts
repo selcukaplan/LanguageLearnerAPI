@@ -147,9 +147,9 @@ export default class User  extends MongoDBCollection<IUser> {
         return updatedUser;
     }
 
-    async addFriendsToUser (userId: number, newFriends : Array<number>) : Promise<IUser> {
+        // $addToSet is used to add a value to an array unless the value is already present
         const updatedUser : (IUser | null) = await this.getModel()
-            .findByIdAndUpdate(userId,{$push: {"friends": newFriends}},
+            .findByIdAndUpdate(userId,{$addToSet: {"friends": newFriendId}},
                 {new : true});
         if (!updatedUser) {
             throw new Error('friends can not be added to the user');
