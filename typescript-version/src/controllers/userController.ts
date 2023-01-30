@@ -11,6 +11,8 @@ import AuthorizationService, {AuthenticatedRequest} from "../services/authorizat
 
 import UnAuthenticated from "../errors/httpErrors/unAuthenticated";
 
+import BadRequest from "../errors/httpErrors/badRequest";
+
 export interface UserPayload  {
     userId: string;
 }
@@ -19,7 +21,8 @@ export default class UserController {
 
     private static userModel: User=new User();
 
-    static fetchUserIdFromRequest(request : AuthenticatedRequest): string {
+    static fetchUserIdFromRequest(request : AuthenticatedRequest
+    ): string {
         const payload : object | string | undefined = request.payload;
         if (typeof payload === 'string' || !payload) {
             throw new UnAuthenticated("Invalid payload!");
@@ -54,9 +57,9 @@ export default class UserController {
         }
     }
 
-    static async getUsersHasSameForeignLanguages(request: AuthenticatedRequest, response: Response, next: NextFunction) {
+    static async getUsersHasSameForeignLanguages(request: Request, response: Response, next: NextFunction) {
         try {
-            const currentUserId = UserController.fetchUserIdFromRequest(request);
+            const currentUserId = UserController.fetchUserIdFromRequest(request as AuthenticatedRequest);
             const otherUsers : Array<IUser> = await UserController.userModel.getUsersWithSameForeignLanguages(currentUserId);
             const responseData = ResponseService.createResponseData(otherUsers);
             return response.status(StatusCodes.OK).json(responseData);
@@ -68,18 +71,19 @@ export default class UserController {
     static async getUsers(request: Request,response: Response,next : NextFunction) {
         try {
             const users: Array<IUser> = await UserController.userModel.getAllUsers();
-            const responseData = ResponseController.createResponseData(users);
+            const responseData = ResponseService.createResponseData(users);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
         }
     }
 
-    static async getFriendsOfUser(request: AuthenticatedRequest,response: Response,next: NextFunction) {
+    static async getFriendsOfUser(request: Request
+                                  ,response: Response,next: NextFunction) {
         try {
-            const currentUserId = UserController.fetchUserIdFromRequest(request);
+            const currentUserId = UserController.fetchUserIdFromRequest(request as AuthenticatedRequest);
             const friendsOfUser: Array<String> =await UserController.userModel.getFriends(currentUserId);
-            const responseData = ResponseController.createResponseData(friendsOfUser);
+            const responseData = ResponseService.createResponseData(friendsOfUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
@@ -87,45 +91,48 @@ export default class UserController {
     }
 
 
-    static async updateUser(request: AuthenticatedRequest,response: Response,next: NextFunction) {
+    static async updateUser(request: Request
+                            ,response: Response,next: NextFunction) {
         try {
             const userBody=request.body;
-            const currentUserId=UserController.fetchUserIdFromRequest(request);
+            const currentUserId=UserController.fetchUserIdFromRequest(request as AuthenticatedRequest);
             const newUserInfo: IUser = await UserController.userModel.updateUser(currentUserId, userBody);
-            const responseData=ResponseController.createResponseData(newUserInfo)
+            const responseData=ResponseService.createResponseData(newUserInfo)
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
         }
 
+    }
 
-    static async addFriendToUser(request: AuthenticatedRequest, response: Response, next: NextFunction) {
+    static async addFriendToUser(request: Request
+                                 , response: Response, next: NextFunction) {
         try {
             const newFriendId=request.params.friendId;
             if (!newFriendId) {throw new BadRequest('Friend id is not found in the request')};
-            const currentUserId=UserController.fetchUserIdFromRequest(request);
+            const currentUserId=UserController.fetchUserIdFromRequest(request as AuthenticatedRequest);
             const updatedUser: IUser =await UserController.userModel.addFriendToUser(currentUserId, newFriendId);
-            const responseData=ResponseController.createResponseData(updatedUser);
+            const responseData=ResponseService.createResponseData(updatedUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
         }
     }
 
-    static async removeFriendFromUser(request: AuthenticatedRequest,response: Response,next: NextFunction) {
+    static async removeFriendFromUser(request: Request
+                                      ,response: Response,next: NextFunction) {
         try {
             const friendId=request.params.friendId;
             if (!friendId) {throw new BadRequest('Friend id is not found in the request')};
-            const currentUserId=UserController.fetchUserIdFromRequest(request);
+            const currentUserId=UserController.fetchUserIdFromRequest(request as AuthenticatedRequest);
             const updatedUser: IUser=await UserController.userModel.removeFriendFromUser(currentUserId,friendId);
             if (!updatedUser) {throw new BadRequest('Remove friend operation is not successful!')}
-            const responseData=ResponseController.createResponseData(updatedUser);
+            const responseData=ResponseService.createResponseData(updatedUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
             next(error);
         }
     }
-
 
 }
 
