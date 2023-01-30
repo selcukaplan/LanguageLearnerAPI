@@ -11,6 +11,7 @@ import validator from "validator";
 
 import bcrypt from "bcrypt";
 
+import {Country} from "./countries";
 
 export interface IUser {
     _id : Types.ObjectId;
@@ -18,9 +19,9 @@ export interface IUser {
     password:string;
     birthDay:Date;
     info:string;
-    nativeLanguage:string;
-    foreignLanguages: Array<string>;
-    friends: Array<number>; // Todo: will be converted to Array<Types.ObjectId>
+    nativeLanguage:Country;
+    foreignLanguages: Array<Country>;
+    friends: Array<string>; // Todo: will be converted to Array<Types.ObjectId>
     createdAt:Date;
     updatedAt:Date;
 
@@ -53,19 +54,20 @@ export default class User  extends MongoDBCollection<IUser> {
         },
         nativeLanguage: {
             type: String,
+            enum: Country,
             required:true,
         },
         foreignLanguages: {
             //Todo: foreign languages are unique that's why another data structure like
             // hash set or map must be used to store unique values instead of using array
-            type: Array,
+            type: [String],
+            enum: Country,
             required:true,
         },
         friends: { //TODO: ref will be added for population
             //Todo: friendIds are unique that's why another data structure like
             // hash set must be used to store unique values instead of using array
-            type:Array,
-            default:[]
+            type:[String]
         }
     }
 
