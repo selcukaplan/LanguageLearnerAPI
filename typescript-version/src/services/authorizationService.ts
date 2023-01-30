@@ -43,26 +43,24 @@ export default class AuthorizationService {
             }
             next(error);
         }
-
     }
 
-    static async authenticateTheUserForWebSocket(webSocket, next) {
+    static async authenticateTheWebSocket(webSocket: Socket, next: NextFunction) {
+        //Todo: custom websocket errors could be created and used instead of http errors.
         try {
-            if (!webSocket.handshake.headers || !webSocket.handshake.headers.token) {
-                throw new UnAuthenticated('token not found!')
+            const encryptedToken: string | undefined = (webSocket.handshake.headers?.token) as string;
+            if (!encryptedToken) {
+                throw new UnAuthenticated('token not found!');
             }
-            const encryptedToken = webSocket.handshake.headers.token;
-            const userToken = await jwt.verify(encryptedToken, process.env.JWT_SECRET);
-            const {userInfo} = userToken;
-            if (!userInfo) {
-                throw new UnAuthenticated('token does not contain user info!')
-            }
-            webSocket.user = userInfo;
+            const payload : string | object = jwt.verify(encryptedToken, process.env.JWT_SECRET!);
+            (webSocket as AuthenticatedSocket).payload =payload;
             next();
         } catch (error) {
+            if (error instanceof JsonWebTokenError) {
+                error=new UnAuthenticated('Token is invalid!');
+            }
             next(error);
         }
     }
-
 
 }
