@@ -5,7 +5,12 @@ import UnAuthenticated from "../errors/unAuthenticated";
 
 
 export interface AuthenticatedRequest extends Request {
-    token: string | JwtPayload;
+    payload: string | object;
+
+}
+
+export interface AuthenticatedSocket extends Socket {
+    payload : string | object;
 
 }
 
