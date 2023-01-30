@@ -43,8 +43,89 @@ export default class UserController {
         }
     }
 
+    static async loginUser(request: Request,response: Response,next: NextFunction) {
+        try {
+            const user: IUser =await UserController.userModel.login(request.body.email,request.body.password);
+            const userToken: string=AuthorizationService.createToken({userId : user._id});
+            const responseData: ResponseData<string> =ResponseService.createResponseData(userToken);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async getUsersHasSameForeignLanguages(request: AuthenticatedRequest, response: Response, next: NextFunction) {
+        try {
+            const currentUserId = UserController.fetchUserIdFromRequest(request);
+            const otherUsers : Array<IUser> = await UserController.userModel.getUsersWithSameForeignLanguages(currentUserId);
+            const responseData = ResponseService.createResponseData(otherUsers);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async getUsers(request: Request,response: Response,next : NextFunction) {
+        try {
+            const users: Array<IUser> = await UserController.userModel.getAllUsers();
+            const responseData = ResponseController.createResponseData(users);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async getFriendsOfUser(request: AuthenticatedRequest,response: Response,next: NextFunction) {
+        try {
+            const currentUserId = UserController.fetchUserIdFromRequest(request);
+            const friendsOfUser: Array<String> =await UserController.userModel.getFriends(currentUserId);
+            const responseData = ResponseController.createResponseData(friendsOfUser);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
 
 
+    static async updateUser(request: AuthenticatedRequest,response: Response,next: NextFunction) {
+        try {
+            const userBody=request.body;
+            const currentUserId=UserController.fetchUserIdFromRequest(request);
+            const newUserInfo: IUser = await UserController.userModel.updateUser(currentUserId, userBody);
+            const responseData=ResponseController.createResponseData(newUserInfo)
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+
+
+    static async addFriendToUser(request: AuthenticatedRequest, response: Response, next: NextFunction) {
+        try {
+            const newFriendId=request.params.friendId;
+            if (!newFriendId) {throw new BadRequest('Friend id is not found in the request')};
+            const currentUserId=UserController.fetchUserIdFromRequest(request);
+            const updatedUser: IUser =await UserController.userModel.addFriendToUser(currentUserId, newFriendId);
+            const responseData=ResponseController.createResponseData(updatedUser);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async removeFriendFromUser(request: AuthenticatedRequest,response: Response,next: NextFunction) {
+        try {
+            const friendId=request.params.friendId;
+            if (!friendId) {throw new BadRequest('Friend id is not found in the request')};
+            const currentUserId=UserController.fetchUserIdFromRequest(request);
+            const updatedUser: IUser=await UserController.userModel.removeFriendFromUser(currentUserId,friendId);
+            if (!updatedUser) {throw new BadRequest('Remove friend operation is not successful!')}
+            const responseData=ResponseController.createResponseData(updatedUser);
+            return response.status(StatusCodes.OK).json(responseData);
+        } catch (error) {
+            next(error);
+        }
+    }
 
 
 }
+
