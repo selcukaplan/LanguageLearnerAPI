@@ -17,7 +17,7 @@ export interface UserPayload  {
 
 export default class UserController {
 
-    private static userModel: User;
+    private static userModel: User=new User();
 
     static fetchUserIdFromRequest(request : AuthenticatedRequest): string {
         const payload : object | string | undefined = request.payload;
