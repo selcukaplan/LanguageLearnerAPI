@@ -1,7 +1,7 @@
 
 
 
-import express, {Express,RequestHandler} from "express";
+import express, {Express,RequestHandler,ErrorRequestHandler} from "express";
 
 import "dotenv/config";
 
@@ -35,7 +35,7 @@ export default class ExpressServer {
     }
 
 
-    bindRequestHandler(requestHandler: RequestHandler): void {
+    bindRequestHandler(requestHandler: RequestHandler | ErrorRequestHandler): void {
         this.expressServer.use(requestHandler);
 
     }
