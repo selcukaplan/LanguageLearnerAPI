@@ -155,6 +155,7 @@ export default class User  extends MongoDBCollection<IUser> {
         if (!this.isSubSetOfDefinitions(userBody)) {
             throw new BadRequest('user body is not valid!');
         }
+        //Todo: validators not working while updating, must be checked
         const updatedUser : (IUser | null) = await this.getModel().findByIdAndUpdate(userId, userBody,{new : true});
         if (!updatedUser) {
             throw new BadRequest('user is not updated!');
