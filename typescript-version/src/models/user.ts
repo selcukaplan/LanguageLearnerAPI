@@ -64,6 +64,10 @@ export default class User  extends MongoDBCollection<IUser> {
             type: [String],
             enum: Languages,
             required:true,
+            validate : {
+                validator : User.isArrayUnique,
+                message :"foreign languages must be unique"
+            }
         },
         friends: {
             //  Todo: hash set could be used to store unique values instead of using array
@@ -76,6 +80,12 @@ export default class User  extends MongoDBCollection<IUser> {
     constructor(userName=User.userName,userDefinitions = User.userDefinitions) {
         super(userName,userDefinitions);
     }
+
+    static isArrayUnique<T>(arr : Array<T>) : boolean {
+       const stringMap: Set<T> = new Set(arr);
+       return stringMap.size  === arr.length;
+    }
+
 
      async signUp (user:IUser): Promise<IUser> {
         try {
