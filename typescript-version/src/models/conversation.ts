@@ -15,15 +15,16 @@ class Conversation extends  MongoDBCollection<IConversation>{
     //Todo: when conversation is removed, all messages belong to it must also  be removed.
 
     private static conversationDefinitions = {
-        members: { //TODO: ref will be added for population
+        members: {
             //TODO: map could be used to store unique members
-            type:Array,
+            type: [Types.ObjectId],
+            ref: "User",
             required: true,
             validate:  [Conversation.hasTwoMembers,"At least two members must exist"]
         }
     }
 
-    private static hasTwoMembers (arr: Array<number>) : boolean {
+    private static hasTwoMembers (arr: Array<Types.ObjectId>) : boolean {
         return arr.length >= 2;
 
     }
