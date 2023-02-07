@@ -82,7 +82,7 @@ export default class UserController {
                                   ,response: Response,next: NextFunction) {
         try {
             const currentUserId = UserController.fetchUserIdFromRequest(request as AuthenticatedRequest);
-            const friendsOfUser: Array<String> =await UserController.userModel.getFriends(currentUserId);
+            const friendsOfUser: Array<string> =await UserController.userModel.getFriends(currentUserId);
             const responseData = ResponseService.createResponseData(friendsOfUser);
             return response.status(StatusCodes.OK).json(responseData);
         } catch (error) {
