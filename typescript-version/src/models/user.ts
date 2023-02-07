@@ -23,7 +23,7 @@ export interface IUser {
     info:string;
     nativeLanguage:Languages;
     foreignLanguages: Array<Languages>;
-    friends: Array<string>; // Todo: will be converted to Array<Types.ObjectId>
+    friends: Array<Types.ObjectId>;
     createdAt:Date;
     updatedAt:Date;
 
@@ -60,17 +60,16 @@ export default class User  extends MongoDBCollection<IUser> {
             required:true,
         },
         foreignLanguages: {
-            //Todo: foreign languages are unique that's why another data structure like
-            // hash set or map must be used to store unique values instead of using array
+            // Todo: hash set or map could be used to store unique values instead of using array
             type: [String],
             enum: Languages,
             required:true,
         },
-        friends: { //TODO: ref will be added for population
-            //Todo: friendIds are unique that's why another data structure like
-            // hash set must be used to store unique values instead of using array
-            //Todo: friends' type will be Types.ObjectId
-            type:[String]
+        friends: {
+            //  Todo: hash set could be used to store unique values instead of using array
+            //Todo: user itself id should not be added
+            type:[Types.ObjectId], // Todo: unique validator check will be added
+            ref: "User"
         }
     }
 
@@ -164,7 +163,7 @@ export default class User  extends MongoDBCollection<IUser> {
     }
 
     async addFriendToUser(userId: string, newFriendId: string) : Promise<IUser> {
-
+        let newFriendId_: Types.ObjectId = new Types.ObjectId(newFriendId);
         // $addToSet is used to add a value to an array unless the value is already present
         const updatedUser : (IUser | null) = await this.getModel()
             .findByIdAndUpdate(userId,{$addToSet: {"friends": newFriendId}},
@@ -177,6 +176,7 @@ export default class User  extends MongoDBCollection<IUser> {
     }
 
     async removeFriendFromUser(userId: string, removedFriendId: string) : Promise<IUser> {
+        let removeFriendId_: Types.ObjectId = new Types.ObjectId(removedFriendId);
         const updatedUser  : (IUser | null) = await this.getModel().findByIdAndUpdate(userId,
             {$pull : {"friends" : removedFriendId}}, {new : true})
         if (!updatedUser) {
