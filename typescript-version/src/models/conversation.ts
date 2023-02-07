@@ -1,5 +1,7 @@
 import MongoDBCollection from "./mongoDBcollection";
 
+import {Types} from "mongoose";
+
 
 interface IConversation {
     members: Array<number>;
