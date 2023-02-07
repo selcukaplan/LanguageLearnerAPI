@@ -151,7 +151,8 @@ export default class User  extends MongoDBCollection<IUser> {
             throw new BadRequest("user's friends are not found!");
         }
         const friends=userObject.friends;
-        return friends;
+        const friendsAsString = friends.map((friendId) => friendId.toString()); // Todo: not good approach
+        return friendsAsString;
     }
 
     async getAllUsers(): Promise<Array<IUser>>{
