@@ -165,7 +165,7 @@ export default class User  extends MongoDBCollection<IUser> {
             throw new BadRequest('user body is not valid!');
         }
         //Todo: validators not working while updating, must be checked
-        const updatedUser : (IUser | null) = await this.getModel().findByIdAndUpdate(userId, userBody,{new : true});
+        const updatedUser : (IUser | null) = await this.getModel().findByIdAndUpdate(userId, userBody,{new : true,runValidators: true});
         if (!updatedUser) {
             throw new BadRequest('user is not updated!');
         }
@@ -176,8 +176,8 @@ export default class User  extends MongoDBCollection<IUser> {
         let newFriendId_: Types.ObjectId = new Types.ObjectId(newFriendId);
         // $addToSet is used to add a value to an array unless the value is already present
         const updatedUser : (IUser | null) = await this.getModel()
-            .findByIdAndUpdate(userId,{$addToSet: {"friends": newFriendId}},
-                {new : true});
+            .findByIdAndUpdate(userId,{$addToSet: {"friends": newFriendId_}},
+                {new : true,runValidators: true});
         if (!updatedUser) {
             throw new BadRequest('friends can not be added to the user');
         }
@@ -188,7 +188,7 @@ export default class User  extends MongoDBCollection<IUser> {
     async removeFriendFromUser(userId: string, removedFriendId: string) : Promise<IUser> {
         let removeFriendId_: Types.ObjectId = new Types.ObjectId(removedFriendId);
         const updatedUser  : (IUser | null) = await this.getModel().findByIdAndUpdate(userId,
-            {$pull : {"friends" : removedFriendId}}, {new : true})
+            {$pull : {"friends" : removeFriendId_}}, {new : true,runValidators: true})
         if (!updatedUser) {
             throw new  BadRequest('friends can not be added to the user');
         }
