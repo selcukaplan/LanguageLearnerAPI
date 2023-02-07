@@ -21,7 +21,7 @@ export default class UserController {
 
     private static userModel: User=new User();
 
-    static fetchUserIdFromRequest(request : AuthenticatedRequest
+    protected static fetchUserIdFromRequest(request : AuthenticatedRequest
     ): string {
         const payload : object | string | undefined = request.payload;
         if (typeof payload === 'string' || !payload) {
