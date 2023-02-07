@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "dev": "nodemon ./build/main.js",
     "build": "tsc",
     "test": "tsc -w",
-    "start": "nodemon ./build/main.js"
+    "start": "node  ./build/main.js"
   },
   "keywords": [],
   "author": "",
