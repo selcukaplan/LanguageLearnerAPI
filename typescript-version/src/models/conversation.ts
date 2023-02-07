@@ -4,7 +4,7 @@ import {Types} from "mongoose";
 
 
 interface IConversation {
-    members: Array<number>;
+    members: Array<Types.ObjectId>;
     createdAt:Date;
     updatedAt:Date;
     
@@ -22,7 +22,11 @@ class Conversation extends  MongoDBCollection<IConversation>{
             type: [Types.ObjectId],
             ref: "User",
             required: true,
-            validate:  [Conversation.hasTwoMembers,"At least two members must exist"]
+            validate: {
+                validator : Conversation.hasTwoMembers, // Todo: will be checked
+                message : "At least two members must exist"
+            }
+            //[Conversation.hasTwoMembers,"At least two members must exist"]
         }
     }
 
