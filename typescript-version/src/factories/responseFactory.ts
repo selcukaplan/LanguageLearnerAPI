@@ -13,7 +13,7 @@ export interface ResponseError {
 }
 
 
-export default class  ResponseService {
+export default class ResponseFactory {
 
     static createResponseError (error: Error) : ResponseError {
         return {

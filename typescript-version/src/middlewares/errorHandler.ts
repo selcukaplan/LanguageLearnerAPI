@@ -5,7 +5,7 @@ import {StatusCodes} from "http-status-codes";
 
 import {HTTPError} from "../errors/httpErrors/HTTPError";
 
-import ResponseService from "../services/responseService";
+import ResponseFactory from "../factories/responseFactory";
 
   async function errorHandlerMiddleware (error: Error,request: Request,response: Response,next: NextFunction) {
     let statusCode : number;
@@ -14,7 +14,7 @@ import ResponseService from "../services/responseService";
     } else {
         statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
     }
-    return response.status(statusCode).json(ResponseService.createResponseError(error));
+    return response.status(statusCode).json(ResponseFactory.createResponseError(error));
 }
 
 export default errorHandlerMiddleware;
