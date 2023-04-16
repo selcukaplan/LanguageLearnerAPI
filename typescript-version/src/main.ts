@@ -2,22 +2,14 @@
 
 
 
-import  ExpressServer from "./servers/expressServer";
-
-import errorHandlerMiddleware from "./middlewares/errorHandler";
 
 import MongoDB from "./database/mongoDB";
 
-import userRouter from "./routes/userRouter";
-
-const expressServer: ExpressServer = ExpressServer.createServerFromConfig();
-
-expressServer.bindRequestHandlerToPath('/api/v1/users',userRouter);
-
-expressServer.bindRequestHandler(errorHandlerMiddleware);
+import ServerFactory from "./factories/serverFactory";
 
 async function startWebBackend() {
     try {
+        const expressServer = ServerFactory.createExpressServer();
         console.log(await MongoDB.connect());
         console.log(await expressServer.start());
     } catch (error) {
