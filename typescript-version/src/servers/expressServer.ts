@@ -7,12 +7,11 @@ import "dotenv/config";
 
 import cors from "cors";
 
-const defaultPort=8080;
-
-
 export default class ExpressServer {
 
-    private port: number;
+    private static  defaultPort=8080;
+
+    private readonly port: number;
 
     private expressServer: Express;
 
@@ -24,7 +23,7 @@ export default class ExpressServer {
     }
 
     public static createServerFromConfig(): ExpressServer {
-        const configPort: number= Number(process.env.PORT_HTTP) || defaultPort;
+        const configPort: number= Number(process.env.HTTP_PORT) || ExpressServer.defaultPort;
         return new ExpressServer(configPort);
     }
 
