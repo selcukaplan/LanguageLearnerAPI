@@ -3,9 +3,13 @@
 
 import mongoose from "mongoose";
 
+import "dotenv/config";
+
 export default class MongoDB {
 
-    static async connect(mongoURI: string = process.env.MONGO_URI,options: object ={}): Promise<string> {
+    private static default_URI:string =process.env.MONGO_URI || "";
+
+    static async connect(mongoURI: string =MongoDB.default_URI ,options: object ={}): Promise<string> {
         let isOptionsEmpty = Object.entries(options).length === 0;
         mongoose.set("strictQuery", false);
         if (isOptionsEmpty) {
